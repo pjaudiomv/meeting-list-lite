@@ -92,7 +92,32 @@ class MLL {
 	 * @return void
 	 */
 	public function assets(): void {
-        wp_enqueue_script('tsml_lite_ui', 'https://cdn.aws.bmlt.app/tsml.js', [], '4.0', ['in_footer' => true, 'strategy' => 'async']);
+        wp_enqueue_script('tsml_ui', 'https://cdn.aws.bmlt.app/tsml.js', [], '4.0', ['in_footer' => true, 'strategy' => 'async']);
+        $tsml_ui_config = [
+            'distance_unit' => 'mi',
+            'calendar_enabled' => false,
+            'show' => [
+                'controls' => true,
+                'title' => false,
+            ],
+            'strings' => [
+                'en' => [
+                    'region' => 'Area',
+                    'types' => [
+                        'inactive' => 'Inactive'
+                    ],
+                    'type_descriptions' => [
+                        'O' => 'This meeting is open to addicts and non-addicts alike. All are welcome',
+                        'C' => 'This meeting is closed to non-addicts'
+                    ],
+                ]
+            ]
+        ];
+        wp_localize_script(
+            'tsml_ui',
+            'tsml_react_config',
+            $tsml_ui_config
+        );
 	}
 
 	/**
@@ -123,12 +148,6 @@ class MLL {
 				'sanitize_callback' => 'sanitize_text_field',
 			]
 		);
-        $tsml_ui_config = [];
-        wp_localize_script(
-            'tsml_ui',
-            'tsml_react_config',
-            $tsml_ui_config
-        );
 	}
 
 	/**
