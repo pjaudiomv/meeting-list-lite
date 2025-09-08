@@ -3,7 +3,7 @@
  * Plugin Name:       Meeting List Lite
  * Plugin URI:        https://wordpress.org/plugins/meeting-list-lite/
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
- * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[mll]" in the code section of a page or a post.
+ * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
  * Version:           1.0.0
  * Requires PHP:      8.0
@@ -63,14 +63,14 @@ class MLL {
 		} else {
 			// If not in the admin dashboard, set up a shortcode and associated actions
 			add_action( 'wp_enqueue_scripts', [ $this, 'assets' ] );
-			add_shortcode( 'mll', [ static::class, 'setup_shortcode' ] );
+			add_shortcode( 'tsml_ui', [ static::class, 'setup_shortcode' ] );
 		}
 	}
 
 	/**
 	 * Setup and render the MLL shortcode.
 	 *
-	 * This method processes the attributes provided to the [mll] shortcode and
+	 * This method processes the attributes provided to the [tsml_ui] shortcode and
 	 * sets up the necessary shortcode attributes for rendering the meeting list
 	 * If no shortcode attributes are provided, default values from plugin options
 	 * are used.

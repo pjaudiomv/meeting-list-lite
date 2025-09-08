@@ -14,13 +14,13 @@ This is a WordPress plugin for displaying 12-Step Meeting Information.
 == Description ==
 
 This is a WordPress plugin for displaying 12-Step Meeting Information.
-To use this, specify [mll] in your page short code.
+To use this, specify [tsml_ui] in your page short code.
 
 == Installation ==
 
 1. Upload `the meeting-list-lite` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Add [mll] shortcode to your WordPress page/post.
+3. Add [tsml_ui] shortcode to your WordPress page/post.
 4. You can change the plugin settings either in the WordPress dashboard under Settings->Meeting List Lite or using shortcode attributes.
 
 == Changelog ==
