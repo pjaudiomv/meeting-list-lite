@@ -206,7 +206,7 @@ class MLL {
 		);
 		$custom_css = get_option( 'mll_custom_css' );
 		if ( ! empty( $custom_css ) ) {
-			wp_register_style( 'mll-custom', false );
+			wp_register_style( 'mll-custom', false, [], self::MLL_VERSION );
 			wp_enqueue_style( 'mll-custom' );
 			wp_add_inline_style( 'mll-custom', $custom_css );
 		}
