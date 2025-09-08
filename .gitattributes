@@ -7,5 +7,5 @@ composer.lock export-ignore
 docker-compose.yml export-ignore
 Dockerfile export-ignore
 Makefile export-ignore
-contribute.md export-ignore
+CONTRIBUTING.md export-ignore
 /.github export-ignore
