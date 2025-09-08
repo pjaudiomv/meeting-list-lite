@@ -167,6 +167,25 @@ class MLL {
 	}
 
 	/**
+	 * Sanitize custom CSS input.
+	 *
+	 * @param string $input Raw CSS input.
+	 * @return string Sanitized CSS.
+	 */
+	public static function sanitize_custom_css( string $input ): string {
+		if ( empty( trim( $input ) ) ) {
+			return '';
+		}
+		// Basic CSS sanitization - remove script tags and potentially dangerous content
+		$css = wp_strip_all_tags( $input );
+		$css = preg_replace( '/javascript:/i', '', $css );
+		$css = preg_replace( '/expression\s*\(/i', '', $css );
+		$css = preg_replace( '/vbscript:/i', '', $css );
+		$css = preg_replace( '/@import/i', '', $css );
+		return $css;
+	}
+
+	/**
 	 * Enqueue plugin styles and scripts.
 	 *
 	 * This method is responsible for enqueueing the necessary CSS and JavaScript
@@ -185,6 +204,12 @@ class MLL {
 				'strategy' => 'async',
 			]
 		);
+		$custom_css = get_option( 'mll_custom_css' );
+		if ( ! empty( $custom_css ) ) {
+			wp_register_style( 'mll-custom', false );
+			wp_enqueue_style( 'mll-custom' );
+			wp_add_inline_style( 'mll-custom', $custom_css );
+		}
 		$tsml_ui_config = self::get_tsml_config();
 		wp_localize_script(
 			'mll_tsml_ui',
@@ -225,6 +250,14 @@ class MLL {
 			[
 				'type' => 'string',
 				'sanitize_callback' => [ static::class, 'sanitize_tsml_config' ],
+			]
+		);
+		register_setting(
+			self::SETTINGS_GROUP,
+			'mll_custom_css',
+			[
+				'type' => 'string',
+				'sanitize_callback' => [ static::class, 'sanitize_custom_css' ],
 			]
 		);
 	}
@@ -278,6 +311,7 @@ class MLL {
 		$mll_data_src = esc_attr( get_option( 'mll_data_src', self::DEFAULT_DATA_SRC ) );
 		$mll_google_key = esc_attr( get_option( 'mll_google_key' ) );
 		$mll_tsml_config = get_option( 'mll_tsml_config', '' );
+		$mll_custom_css = get_option( 'mll_custom_css', '' );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		?>
 		<div class="wrap">
@@ -317,6 +351,24 @@ class MLL {
 								<summary><strong>Show Default Configuration</strong></summary>
 								<pre style="background: #f0f0f0; padding: 10px; margin-top: 10px; overflow: auto; max-height: 400px; font-size: 11px;"><?php echo esc_html( $default_config_json ); ?></pre>
 							</details>
+						</td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<th scope="row">Custom CSS</th>
+						<td>
+							<textarea name="mll_custom_css" id="mll_custom_css" rows="10" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $mll_custom_css ); ?></textarea><br />
+							<label for="mll_custom_css">Additional CSS to customize the appearance of the meeting list.</label><br />
+							<p><strong>Example:</strong></p>
+							<pre style="background: #f0f0f0; padding: 10px; margin-top: 5px; font-size: 11px;">/* Change the primary color */
+#tsml-ui .btn-primary {
+	background-color: #007cba;
+	border-color: #007cba;
+}
+
+/* Hide certain elements */
+#tsml-ui .meeting-type {
+	display: none;
+}</pre>
 						</td>
 					</tr>
 				</table>
