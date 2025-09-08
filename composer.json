@@ -1,11 +1,11 @@
 {
-  "name": "mll",
-  "description": "This is a WordPress Meeting List Plugin.",
+  "name": "pjaudiomv/meeting-list-lite",
+  "description": "This is a WordPress plugin for Meeting Lists.",
   "type": "project",
   "license": "MIT",
   "authors": [
     {
-    "name": "pjaudiomv"
+      "name": "pjaudiomv"
     }
   ],
   "require-dev": {
