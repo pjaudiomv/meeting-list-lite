@@ -31,7 +31,7 @@ fmt: composer ## PHP Fmt
 
 .PHONY: docs
 docs:  ## Generate Docs
-	docker run --rm -v $(shell pwd):/data phpdoc/phpdoc:3 --ignore=vendor/ --ignore=nacc2/ -d . -t docs/
+	docker run --rm -v $(shell pwd):/data phpdoc/phpdoc:3 --ignore=vendor/ -d . -t docs/
 
 .PHONY: dev
 dev: ## Start dev compose
@@ -39,8 +39,8 @@ dev: ## Start dev compose
 
 .PHONY: mysql
 mysql:  ## Runs mysql cli in mysql container
-	docker exec -it mll-db-1 mariadb -u root -psomewordpress wordpress
+	docker exec -it meeting-list-db-1 mariadb -u root -psomewordpress wordpress
 
 .PHONY: bash
 bash:  ## Runs bash shell in wordpress container
-	docker exec -it -w /var/www/html mll-lite-wordpress-1 bash
+	docker exec -it -w /var/www/html meeting-list-lite-wordpress-1 bash

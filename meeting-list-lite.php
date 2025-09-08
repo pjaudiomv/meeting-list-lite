@@ -25,8 +25,8 @@ if ( ! defined( 'WPINC' ) ) {
 class MLL {
 
 	private const SETTINGS_GROUP = 'mll-group';
-	private const DEFAULT_TIMEZONE = 'America/New_York';
-    private const DEFAULT_DATA_SRC = '';
+	private const TSML_CDN_URL = 'https://cdn.aws.bmlt.app/tsml.js';
+	private const DEFAULT_DATA_SRC = 'https://cdn.aws.bmlt.app/sample.json';
 
 	private $plugin_dir;
 	/**
@@ -78,9 +78,15 @@ class MLL {
 	 * @return string The HTML for the MLL shortcode.
 	 */
 	public static function setup_shortcode( string|array $attrs = [] ): string {
-        $timezone = ! empty( $attrs['timezone'] ) ? sanitize_text_field( strtoupper( $attrs['timezone'] ) ) : sanitize_text_field( get_option( 'mll_timezone', self::DEFAULT_TIMEZONE ) );
-        $datasrc = ! empty( $attrs['data_src'] ) ? sanitize_text_field( strtoupper( $attrs['data_src'] ) ) : sanitize_text_field( get_option( 'mll_data_src', self::DEFAULT_DATA_SRC ) );
-        return '<div id="tsml-ui" data-src="'.$datasrc.'" data-timezone="' .$timezone. '"></div>';
+		$option_data_src = get_option( 'mll_data_src' );
+		$data_src = ! empty( $attrs['data_src'] ) ? sanitize_url( $attrs['data_src'] ) : ( ! empty( $option_data_src ) ? sanitize_url( $option_data_src ) : sanitize_url( self::DEFAULT_DATA_SRC ) );
+		$timezone = sanitize_text_field( get_option( 'timezone_string' ) );
+		$timezone_attr = ! empty( $timezone ) ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
+		$content = '<style>.mll-fullwidth{width:100vw!important;position:relative!important;left:50%!important;margin-left:-50vw!important;padding:20px!important;box-sizing:border-box!important;max-width:none!important}#tsml-ui{width:100%!important;min-height:600px!important}</style>';
+		$content .= '<div class="mll-fullwidth">';
+		$content .= '<div id="tsml-ui" data-src="' . esc_attr( $data_src ) . '"' . $timezone_attr . '></div>';
+		$content .= '</div>';
+		return $content;
 	}
 
 	/**
@@ -92,32 +98,51 @@ class MLL {
 	 * @return void
 	 */
 	public function assets(): void {
-        wp_enqueue_script('tsml_ui', 'https://cdn.aws.bmlt.app/tsml.js', [], '4.0', ['in_footer' => true, 'strategy' => 'async']);
-        $tsml_ui_config = [
-            'distance_unit' => 'mi',
-            'calendar_enabled' => false,
-            'show' => [
-                'controls' => true,
-                'title' => false,
+		wp_enqueue_script(
+			'mll_tsml_ui',
+			self::TSML_CDN_URL,
+			[],
+			'4.0',
+			[
+				'in_footer' => true,
+				'strategy' => 'async',
+			]
+		);
+		$tsml_ui_config = [
+			'distance_unit' => 'mi',
+			'calendar_enabled' => false,
+			'show' => [
+				'controls' => true,
+				'title' => false,
+			],
+            'map' => [
+                'tiles' => [
+                    'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                ],
+                'tiles_dark' => [
+                    'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                ],
             ],
-            'strings' => [
-                'en' => [
-                    'region' => 'Area',
-                    'types' => [
-                        'inactive' => 'Inactive'
-                    ],
-                    'type_descriptions' => [
-                        'O' => 'This meeting is open to addicts and non-addicts alike. All are welcome',
-                        'C' => 'This meeting is closed to non-addicts'
-                    ],
-                ]
-            ]
-        ];
-        wp_localize_script(
-            'tsml_ui',
-            'tsml_react_config',
-            $tsml_ui_config
-        );
+			'strings' => [
+				'en' => [
+					'region' => 'Area',
+					'types' => [
+						'inactive' => 'Inactive',
+					],
+					'type_descriptions' => [
+						'O' => 'This meeting is open to addicts and non-addicts alike. All are welcome',
+						'C' => 'This meeting is closed to non-addicts',
+					],
+				],
+			],
+		];
+		wp_localize_script(
+			'mll_tsml_ui',
+			'tsml_react_config',
+			$tsml_ui_config
+		);
 	}
 
 	/**
@@ -130,22 +155,12 @@ class MLL {
 	 * @return void
 	 */
 	public static function register_settings(): void {
-		// Register plugin settings with WordPress
-        register_setting(
-            self::SETTINGS_GROUP,
-            'mll_data_src',
-            [
-                'type' => 'string',
-                'sanitize_callback' => 'sanitize_text_field',
-            ]
-        );
 		register_setting(
 			self::SETTINGS_GROUP,
-			'mll_timezone',
+			'mll_data_src',
 			[
 				'type' => 'string',
-				'default' => self::DEFAULT_TIMEZONE,
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => 'sanitize_url',
 			]
 		);
 	}
@@ -159,13 +174,12 @@ class MLL {
 	 * @return void
 	 */
 	public static function create_menu(): void {
-		// Create the plugin's settings page in the WordPress admin menu
 		add_options_page(
-			esc_html__( 'Meeting List Lite Settings', 'mll' ), // Page Title
+			esc_html__( 'Meeting List Lite Settings', 'mll' ),  // Page Title
 			esc_html__( 'Meeting List Lite', 'mll' ),          // Menu Title
-			'manage_options',            // Capability
-			'mll',                      // Menu Slug
-			[ static::class, 'draw_settings' ]      // Callback function to display the page content
+			'manage_options',                                  // Capability
+			'mll',                                            // Menu Slug
+			[ static::class, 'draw_settings' ]                // Callback function to display the page content
 		);
 		// Add a settings link in the plugins list
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), [ static::class, 'settings_link' ] );
@@ -197,50 +211,18 @@ class MLL {
 	 * @return void
 	 */
 	public static function draw_settings(): void {
-		// Display the plugin's settings page
-		$mll_data_src = esc_attr( get_option( 'mll_data_src' ) );
-		$mll_timezone = esc_attr( get_option( 'mll_timezone' ) );
-		$allowed_html = [
-			'select' => [
-				'id'   => [],
-				'name' => [],
-			],
-			'option' => [
-				'value'   => [],
-				'selected'   => [],
-			],
-		];
+		$mll_data_src = esc_attr( get_option( 'mll_data_src', self::DEFAULT_DATA_SRC ) );
 		?>
 		<div class="wrap">
-			<h2>MLL Settings</h2>
+			<h2>Meeting List Lite Settings</h2>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'mll-group' ); ?>
 				<?php do_settings_sections( 'mll-group' ); ?>
 				<table class="form-table">
-					<tr valign="top">
-						<th scope="row">Time Zone</th>
-						<td>
-							<?php
-							echo wp_kses(
-								static::render_select_option(
-									'mll_timezone',
-									$mll_timezone,
-									[
-										'America/Chicago' => 'America/Chicago',
-                                        'America/Denver' => 'America/Denver',
-										'America/Los_Angeles' => 'America/Los_Angeles',
-                                        'America/New_York' => 'America/New_York',
-									]
-								),
-								$allowed_html
-							);
-							?>
-						</td>
-					</tr>
-					<tr valign="top">
+					<tr style="vertical-align: top;">
 						<th scope="row">Data Source URL</th>
 						<td>
-                            <input type="text" name="mll_data_src" size="60" value="<?php echo $mll_data_src; ?>" /><br />
+							<input type="text" name="mll_data_src" id="mll_data_src" size="80" value="<?php echo esc_attr( $mll_data_src ); ?>" /><br />
 							<label for="mll_data_src">Needs to be valid TSML JSON</label>
 						</td>
 					</tr>
@@ -250,30 +232,6 @@ class MLL {
 		</div>
 		<?php
 	}
-
-    /**
-     * Render a dropdown select input for plugin settings.
-     *
-     * This method generates the HTML markup for a dropdown select input field with the specified name
-     * and options. It also preselects the option that matches the provided selected value.
-     *
-     * @param string $name          The name attribute for the select input.
-     * @param string $selected_value The value to be preselected in the dropdown.
-     * @param array  $options       An associative array of options (value => label) for the dropdown.
-     *
-     * @return string The generated HTML markup for the select input.
-     */
-    private static function render_select_option( string $name, string $selected_value, array $options ): string {
-        // Render a dropdown select input for settings
-        $select_html = "<select id='$name' name='$name'>";
-        foreach ( $options as $value => $label ) {
-            $selected = selected( $selected_value, $value, false );
-            $select_html .= "<option value='$value' $selected>$label</option>";
-        }
-        $select_html .= '</select>';
-
-        return $select_html;
-    }
 
 	/**
 	 * Get an instance of the MLL plugin class.

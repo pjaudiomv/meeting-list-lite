@@ -1,8 +1,8 @@
-=== ML Lite ===
+=== Meeting List Lite ===
 
 Contributors: pjaudiomv
 Plugin URI: https://wordpress.org/plugins/meeting-list-lite/
-Tags: na, meeting list, recovery, addiction
+Tags: meeting list, recovery, addiction
 Requires PHP: 8.0
 Tested up to: 6.8
 Stable tag: 1.0.0
@@ -21,11 +21,10 @@ To use this, specify [mll] in your page short code.
 1. Upload `the mll` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Add [mll] shortcode to your WordPress page/post.
-4. You can change the plugin settings either in the the wordpress dashboard under Settings->mll or using shortcode attributes.
+4. You can change the plugin settings either in the WordPress dashboard under Settings->Meeting List Lite or using shortcode attributes.
 
 == Changelog ==
 
-
 = 1.0.0 =
-* September 7, 2025
+
 * Initial Release
