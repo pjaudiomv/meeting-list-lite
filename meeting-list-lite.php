@@ -115,16 +115,16 @@ class MLL {
 				'controls' => true,
 				'title' => false,
 			],
-            'map' => [
-                'tiles' => [
-                    'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                ],
-                'tiles_dark' => [
-                    'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                ],
-            ],
+			'map' => [
+				'tiles' => [
+					'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+					'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+				],
+				'tiles_dark' => [
+					'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+					'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+				],
+			],
 			'strings' => [
 				'en' => [
 					'region' => 'Area',
