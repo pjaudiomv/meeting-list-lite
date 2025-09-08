@@ -31,6 +31,22 @@ To get things going in your local environment:
 
 Please make note of the `.editorconfig` file and adhere to it, as this will minimize formatting errors. If you are using PHPStorm, you will need to install the EditorConfig plugin.
 
+### PHP Code Style
+
+This project uses PHP CodeSniffer (phpcs) for code style enforcement. The coding standards are configured in `.phpcs.xml`.
+
+To check your code for style violations:
+```bash
+make lint
+```
+
+To automatically fix code style issues:
+```bash
+make fmt
+```
+
+Make sure to run these commands before submitting your pull request to ensure your code adheres to the project's coding standards.
+
 ## Release Tagging
 
 - If a release is tagged with `beta`, it will be pushed as a zip file in the GitHub release

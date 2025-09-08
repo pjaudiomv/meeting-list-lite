@@ -9,3 +9,4 @@ Dockerfile export-ignore
 Makefile export-ignore
 CONTRIBUTING.md export-ignore
 /.github export-ignore
+/docs  export-ignore

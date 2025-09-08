@@ -24,9 +24,10 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class MLL {
 
+	private const MLL_VERSION = '1.0.0';
 	private const SETTINGS_GROUP = 'mll-group';
-	private const TSML_CDN_URL = 'https://cdn.aws.bmlt.app/tsml.js';
-	private const DEFAULT_DATA_SRC = 'https://cdn.aws.bmlt.app/sample.json';
+	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
+	private const DEFAULT_DATA_SRC = 'https://sheets.code4recovery.org/storage/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE.json';
 
 	private $plugin_dir;
 	/**
@@ -79,14 +80,90 @@ class MLL {
 	 */
 	public static function setup_shortcode( string|array $attrs = [] ): string {
 		$option_data_src = get_option( 'mll_data_src' );
+		$option_google_key  = get_option( 'mll_google_key' );
 		$data_src = ! empty( $attrs['data_src'] ) ? sanitize_url( $attrs['data_src'] ) : ( ! empty( $option_data_src ) ? sanitize_url( $option_data_src ) : sanitize_url( self::DEFAULT_DATA_SRC ) );
 		$timezone = sanitize_text_field( get_option( 'timezone_string' ) );
 		$timezone_attr = ! empty( $timezone ) ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
+		$google_key = ! empty( $attrs['google_key'] ) ? sanitize_url( $attrs['google_key'] ) : ( ! empty( $option_google_key ) ? sanitize_url( $option_google_key ) : '' );
+		$google_key_attr = ! empty( $google_key ) ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
 		$content = '<style>.mll-fullwidth{width:100vw!important;position:relative!important;left:50%!important;margin-left:-50vw!important;padding:20px!important;box-sizing:border-box!important;max-width:none!important}#tsml-ui{width:100%!important;min-height:600px!important}</style>';
 		$content .= '<div class="mll-fullwidth">';
-		$content .= '<div id="tsml-ui" data-src="' . esc_attr( $data_src ) . '"' . $timezone_attr . '></div>';
+		$content .= '<div id="tsml-ui" data-src="' . esc_attr( $data_src ) . '"' . $timezone_attr . $google_key_attr . '></div>';
 		$content .= '</div>';
 		return $content;
+	}
+
+	/**
+	 * Get default TSML UI configuration.
+	 * We do this because default config is program specific.
+	 * @return array Default configuration array.
+	 */
+	private static function get_default_tsml_config(): array {
+		return [
+			'strings' => [
+				'en' => [
+					'type_descriptions' => [
+						'O' => null,
+						'C' => null,
+					],
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get TSML UI configuration (custom or default).
+	 *
+	 * @return array Configuration array.
+	 */
+	private static function get_tsml_config(): array {
+		$custom_config_json = get_option( 'mll_tsml_config' );
+		$default_config = self::get_default_tsml_config();
+
+		if ( empty( $custom_config_json ) ) {
+			return $default_config;
+		}
+
+		$custom_config = json_decode( $custom_config_json, true );
+
+		// If JSON is invalid, return default config
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			return $default_config;
+		}
+
+		// Merge custom config with default (custom overrides default)
+		return array_replace_recursive( $default_config, $custom_config );
+	}
+
+	/**
+	 * Validate and sanitize TSML UI config JSON.
+	 *
+	 * @param string $input Raw JSON input.
+	 * @return string Sanitized JSON or empty string if invalid.
+	 */
+	public static function sanitize_tsml_config( string $input ): string {
+		// Allow empty input
+		if ( empty( trim( $input ) ) ) {
+			return '';
+		}
+
+		// Decode JSON to validate it
+		$decoded = json_decode( $input, true );
+
+		// Check for JSON errors
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			add_settings_error(
+				'mll_tsml_config',
+				'invalid_json',
+				'Invalid JSON format in TSML UI Configuration. Please check your syntax.',
+				'error'
+			);
+			// Return the previous valid value
+			return get_option( 'mll_tsml_config', '' );
+		}
+
+		// Re-encode to ensure clean JSON
+		return wp_json_encode( $decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	}
 
 	/**
@@ -102,42 +179,13 @@ class MLL {
 			'mll_tsml_ui',
 			self::TSML_CDN_URL,
 			[],
-			'4.0',
+			self::MLL_VERSION,
 			[
 				'in_footer' => true,
 				'strategy' => 'async',
 			]
 		);
-		$tsml_ui_config = [
-			'distance_unit' => 'mi',
-			'calendar_enabled' => false,
-			'show' => [
-				'controls' => true,
-				'title' => false,
-			],
-			'map' => [
-				'tiles' => [
-					'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-					'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-				],
-				'tiles_dark' => [
-					'attribution' => '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-					'url' => 'https://{s}s.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-				],
-			],
-			'strings' => [
-				'en' => [
-					'region' => 'Area',
-					'types' => [
-						'inactive' => 'Inactive',
-					],
-					'type_descriptions' => [
-						'O' => 'This meeting is open to addicts and non-addicts alike. All are welcome',
-						'C' => 'This meeting is closed to non-addicts',
-					],
-				],
-			],
-		];
+		$tsml_ui_config = self::get_tsml_config();
 		wp_localize_script(
 			'mll_tsml_ui',
 			'tsml_react_config',
@@ -150,7 +198,7 @@ class MLL {
 	 *
 	 * This method registers the plugin settings with WordPress using the
 	 * `register_setting` function. It defines the settings for 'mll_data_src',
-	 * and 'mll_timezone'.
+	 * 'mll_timezone' and 'mll_tsml_config'.
 	 *
 	 * @return void
 	 */
@@ -161,6 +209,22 @@ class MLL {
 			[
 				'type' => 'string',
 				'sanitize_callback' => 'sanitize_url',
+			]
+		);
+		register_setting(
+			self::SETTINGS_GROUP,
+			'mll_google_key',
+			[
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			]
+		);
+		register_setting(
+			self::SETTINGS_GROUP,
+			'mll_tsml_config',
+			[
+				'type' => 'string',
+				'sanitize_callback' => [ static::class, 'sanitize_tsml_config' ],
 			]
 		);
 	}
@@ -175,8 +239,8 @@ class MLL {
 	 */
 	public static function create_menu(): void {
 		add_options_page(
-			esc_html__( 'Meeting List Lite Settings', 'mll' ),  // Page Title
-			esc_html__( 'Meeting List Lite', 'mll' ),          // Menu Title
+			esc_html__( 'Meeting List Lite Settings', 'meeting-list-lite' ), // Page Title
+			esc_html__( 'Meeting List Lite', 'meeting-list-lite' ),         // Menu Title
 			'manage_options',                                  // Capability
 			'mll',                                            // Menu Slug
 			[ static::class, 'draw_settings' ]                // Callback function to display the page content
@@ -212,6 +276,9 @@ class MLL {
 	 */
 	public static function draw_settings(): void {
 		$mll_data_src = esc_attr( get_option( 'mll_data_src', self::DEFAULT_DATA_SRC ) );
+		$mll_google_key = esc_attr( get_option( 'mll_google_key' ) );
+		$mll_tsml_config = get_option( 'mll_tsml_config', '' );
+		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		?>
 		<div class="wrap">
 			<h2>Meeting List Lite Settings</h2>
@@ -223,7 +290,33 @@ class MLL {
 						<th scope="row">Data Source URL</th>
 						<td>
 							<input type="text" name="mll_data_src" id="mll_data_src" size="80" value="<?php echo esc_attr( $mll_data_src ); ?>" /><br />
-							<label for="mll_data_src">Needs to be valid TSML JSON</label>
+							<label for="mll_data_src">Needs to be valid TSML JSON/Sheet</label>
+						</td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<th scope="row">Google API Key</th>
+						<td>
+							<input type="text" name="mll_google_key" id="mll_google_key" size="60" value="<?php echo esc_attr( $mll_google_key ); ?>" /><br />
+							<label for="mll_google_key">Only needed if using Google Sheets</label>
+						</td>
+					</tr>
+				</table>
+
+				<hr style="margin: 30px 0;">
+
+				<h3>Advanced Settings</h3>
+				<p>These settings provide fine-grained control over the TSML UI appearance and behavior. <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#configure" target="_blank">View full configuration documentation</a></p>
+
+				<table class="form-table">
+					<tr style="vertical-align: top;">
+						<th scope="row">TSML UI Configuration</th>
+						<td>
+							<textarea name="mll_tsml_config" id="mll_tsml_config" rows="20" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $mll_tsml_config ); ?></textarea><br />
+							<label for="mll_tsml_config">Custom TSML UI configuration in JSON format. Leave empty to use defaults.</label><br />
+							<details>
+								<summary><strong>Show Default Configuration</strong></summary>
+								<pre style="background: #f0f0f0; padding: 10px; margin-top: 10px; overflow: auto; max-height: 400px; font-size: 11px;"><?php echo esc_html( $default_config_json ); ?></pre>
+							</details>
 						</td>
 					</tr>
 				</table>

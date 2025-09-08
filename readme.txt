@@ -18,7 +18,7 @@ To use this, specify [mll] in your page short code.
 
 == Installation ==
 
-1. Upload `the mll` directory to the `/wp-content/plugins/` directory
+1. Upload `the meeting-list-lite` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Add [mll] shortcode to your WordPress page/post.
 4. You can change the plugin settings either in the WordPress dashboard under Settings->Meeting List Lite or using shortcode attributes.

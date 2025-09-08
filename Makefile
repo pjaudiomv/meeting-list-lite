@@ -13,7 +13,7 @@ build:  ## Build
 
 .PHONY: clean
 clean:  ## clean
-	rm -rf build dist
+	rm -rf build
 
 $(VENDOR_AUTOLOAD):
 	composer install --prefer-dist --no-progress
@@ -39,7 +39,7 @@ dev: ## Start dev compose
 
 .PHONY: mysql
 mysql:  ## Runs mysql cli in mysql container
-	docker exec -it meeting-list-db-1 mariadb -u root -psomewordpress wordpress
+	docker exec -it meeting-list-lite-db-1 mariadb -u root -psomewordpress wordpress
 
 .PHONY: bash
 bash:  ## Runs bash shell in wordpress container
