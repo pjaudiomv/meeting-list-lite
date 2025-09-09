@@ -62,8 +62,18 @@ class MLL {
 			add_action( 'admin_init', [ static::class, 'register_settings' ] );
 		} else {
 			// If not in the admin dashboard, set up a shortcode and associated actions
-			add_action( 'wp_enqueue_scripts', [ $this, 'assets' ] );
 			add_shortcode( 'tsml_ui', [ static::class, 'setup_shortcode' ] );
+			add_action(
+				'wp',
+				function () {
+					if ( is_singular() ) {
+						$post = get_post();
+						if ( $post && has_shortcode( $post->post_content, 'tsml_ui' ) ) {
+							add_action( 'wp_enqueue_scripts', [ $this, 'assets' ] );
+						}
+					}
+				}
+			);
 		}
 	}
 
@@ -79,16 +89,31 @@ class MLL {
 	 * @return string The HTML for the MLL shortcode.
 	 */
 	public static function setup_shortcode( string|array $attrs = [] ): string {
-		$option_data_src = get_option( 'mll_data_src' );
-		$option_google_key  = get_option( 'mll_google_key' );
-		$data_src = ! empty( $attrs['data_src'] ) ? sanitize_url( $attrs['data_src'] ) : ( ! empty( $option_data_src ) ? sanitize_url( $option_data_src ) : sanitize_url( self::DEFAULT_DATA_SRC ) );
-		$timezone = sanitize_text_field( get_option( 'timezone_string' ) );
-		$timezone_attr = ! empty( $timezone ) ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
-		$google_key = ! empty( $attrs['google_key'] ) ? sanitize_url( $attrs['google_key'] ) : ( ! empty( $option_google_key ) ? sanitize_url( $option_google_key ) : '' );
-		$google_key_attr = ! empty( $google_key ) ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
+		$attrs = shortcode_atts(
+			[
+				'data_src'   => '',
+				'google_key' => '',
+				'timezone'   => '',
+			],
+			(array) $attrs,
+			'tsml_ui'
+		);
+		$option_data_src   = get_option( 'mll_data_src' );
+		$option_google_key = get_option( 'mll_google_key' );
+		$data_src = $attrs['data_src']
+			? esc_url_raw( $attrs['data_src'] )
+			: ( ! empty( $option_data_src ) ? $option_data_src : self::DEFAULT_DATA_SRC );
+		$google_key = $attrs['google_key']
+			? sanitize_text_field( $attrs['google_key'] )
+			: ( ! empty( $option_google_key ) ? $option_google_key : '' );
+		$timezone = $attrs['timezone']
+			? sanitize_text_field( $attrs['timezone'] )
+			: sanitize_text_field( get_option( 'timezone_string' ) );
+		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
+		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
 		$content = '<style>.mll-fullwidth{width:100vw!important;position:relative!important;left:50%!important;margin-left:-50vw!important;padding:20px!important;box-sizing:border-box!important;max-width:none!important}#tsml-ui{width:100%!important;min-height:600px!important}</style>';
 		$content .= '<div class="mll-fullwidth">';
-		$content .= '<div id="tsml-ui" data-src="' . esc_attr( $data_src ) . '"' . $timezone_attr . $google_key_attr . '></div>';
+		$content .= '<div id="tsml-ui" data-src="' . esc_url( $data_src ) . '"' . $timezone_attr . $google_key_attr . '></div>';
 		$content .= '</div>';
 		return $content;
 	}
@@ -182,6 +207,8 @@ class MLL {
 		$css = preg_replace( '/expression\s*\(/i', '', $css );
 		$css = preg_replace( '/vbscript:/i', '', $css );
 		$css = preg_replace( '/@import/i', '', $css );
+		$css = preg_replace( '/url\s*\([^)]*\)/i', '', $css );
+		$css = preg_replace( '/@supports\b/i', '', $css );
 		return $css;
 	}
 
@@ -201,7 +228,7 @@ class MLL {
 			self::MLL_VERSION,
 			[
 				'in_footer' => true,
-				'strategy' => 'async',
+				'strategy' => 'defer',
 			]
 		);
 		$custom_css = get_option( 'mll_custom_css' );
@@ -233,7 +260,7 @@ class MLL {
 			'mll_data_src',
 			[
 				'type' => 'string',
-				'sanitize_callback' => 'sanitize_url',
+				'sanitize_callback' => 'esc_url_raw',
 			]
 		);
 		register_setting(
@@ -294,8 +321,8 @@ class MLL {
 	 */
 	public static function settings_link( array $links ): array {
 		// Add a "Settings" link for the plugin in the WordPress admin
-		$settings_url = admin_url( 'options-general.php?page=mll' );
-		$links[] = "<a href='{$settings_url}'>Settings</a>";
+		$settings_url = esc_url( admin_url( 'options-general.php?page=mll' ) );
+		$links[] = "<a href='{$settings_url}'>" . esc_html__( 'Settings', 'meeting-list-lite' ) . '</a>';
 		return $links;
 	}
 
