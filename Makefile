@@ -8,6 +8,9 @@ help:  ## Print the help documentation
 
 .PHONY: build
 build:  ## Build
+	@echo "Building with commit: $(COMMIT)"
+	@echo "ZIP filename: $(ZIP_FILENAME)"
+	@echo "Build directory: $(BUILD_DIR)"
 	git archive --format=zip --output=${ZIP_FILENAME} $(COMMIT)
 	mkdir -p ${BUILD_DIR} && mv ${ZIP_FILENAME} ${BUILD_DIR}/
 
