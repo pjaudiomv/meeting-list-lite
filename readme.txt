@@ -13,10 +13,7 @@ This is a WordPress plugin for displaying 12-Step Meeting Information.
 
 == Description ==
 
-Meeting List Lite is a streamlined solution for displaying 12-step meeting information on your WordPress site when your
-meeting data is maintained elsewhere. Unlike the full 12 Step Meeting List plugin, this "lite" version doesn't include
-a database or editing capabilities—it simply displays meetings from your existing data source.
-
+Meeting List Lite is a streamlined solution for displaying 12-step meeting information on your WordPress site when your meeting data is maintained elsewhere. Unlike the full 12 Step Meeting List plugin, this "lite" version doesn't include a database or editing capabilities—it simply displays meetings from your existing data source.
 
 **Perfect for service bodies who:**
 * Maintain their meeting data in a Google Sheet, JSON feed, or another system
@@ -32,7 +29,7 @@ a database or editing capabilities—it simply displays meetings from your exist
 * Fully compatible with the TSML data format
 
 **Data Source Requirements:**
-Your data source must follow the [TSML specification](https://github.com/code4recovery/spec). For in-person meetings, latitude and longitude coordinates must already be included in your data—this plugin does not perform geocoding.
+Your data source must follow the [TSML specification](https://github.com/code4recovery/spec). For in-person meetings, latitude and longitude coordinates must already be included in your data, this plugin does not perform geocoding.
 
 To display your meetings, simply add the `[tsml_ui]` shortcode to any page or post, and configure your data source URL in the plugin settings.
 
@@ -61,13 +58,11 @@ The plugin supports JSON feeds and Google Sheets that conform to the [TSML speci
 
 = Does this plugin geocode addresses? =
 
-No. Your data source must already include latitude and longitude coordinates for in-person meetings. If you need geocoding,
-consider using the full 12 Step Meeting List plugin instead.
+No. Your data source must already include latitude and longitude coordinates for in-person meetings. If you need geocoding, consider using the full 12 Step Meeting List plugin instead.
 
 = Can I edit meeting data in WordPress? =
 
-No. This is a display-only plugin. Your data source (JSON feed, Google Sheet, etc.) is the single source of truth. To edit
-meetings, update your external data source.
+No. This is a display-only plugin. Your data source (JSON feed, Google Sheet, etc.) is the single source of truth. To edit meetings, update your external data source.
 
 = Where do I configure my data source? =
 
