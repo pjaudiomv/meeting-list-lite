@@ -23,6 +23,20 @@ To use this, specify [tsml_ui] in your page short code.
 3. Add [tsml_ui] shortcode to your WordPress page/post.
 4. You can change the plugin settings either in the WordPress dashboard under Settings->Meeting List Lite or using shortcode attributes.
 
+== External services ==
+
+This plugin relies on external services to function properly:
+
+**TSML UI React Component**
+- **Service**: Code4Recovery TSML UI (tsml-ui.code4recovery.org)
+- **Purpose**: Provides the JavaScript React component that renders the meeting list interface
+- **Data sent**: No user data is transmitted to this service. The plugin only loads the JavaScript library.
+- **When**: The script is loaded whenever a page contains the [tsml_ui] shortcode
+- **Terms of use**: https://github.com/code4recovery/tsml-ui/blob/main/LICENSE
+- **Privacy policy**: https://code4recovery.org/privacy/
+
+**Note**: You can configure your own data source URL in the plugin settings to avoid using the default external service.
+
 == Changelog ==
 
 = 1.0.0 =

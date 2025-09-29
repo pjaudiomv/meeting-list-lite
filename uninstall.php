@@ -2,7 +2,7 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
-delete_option( 'mll_data_src' );
-delete_option( 'mll_google_key' );
-delete_option( 'mll_tsml_config' );
-delete_option( 'mll_custom_css' );
+delete_option( 'meetinglistlite_data_src' );
+delete_option( 'meetinglistlite_google_key' );
+delete_option( 'meetinglistlite_tsml_config' );
+delete_option( 'meetinglistlite_custom_css' );

@@ -12,22 +12,21 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-namespace MLLPlugin;
+namespace MEETINGLISTLITEPlugin;
 
 if ( ! defined( 'WPINC' ) ) {
 	die( 'Sorry, but you cannot access this page directly.' );
 }
 
 /**
- * Class MLL
- * @package MLLPlugin
+ * Class MEETINGLISTLITE
+ * @package MEETINGLISTLITEPlugin
  */
-class MLL {
+class MEETINGLISTLITE {
 
-	private const MLL_VERSION = '1.0.0';
-	private const SETTINGS_GROUP = 'mll-group';
+	private const MEETINGLISTLITE_VERSION = '1.0.0';
+	private const SETTINGS_GROUP = 'meetinglistlite-group';
 	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
-	private const DEFAULT_DATA_SRC = 'https://sheets.code4recovery.org/storage/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE.json';
 
 	private $plugin_dir;
 	/**
@@ -78,7 +77,7 @@ class MLL {
 	}
 
 	/**
-	 * Setup and render the MLL shortcode.
+	 * Setup and render the MEETINGLISTLITE shortcode.
 	 *
 	 * This method processes the attributes provided to the [tsml_ui] shortcode and
 	 * sets up the necessary shortcode attributes for rendering the meeting list
@@ -86,7 +85,7 @@ class MLL {
 	 * are used.
 	 *
 	 * @param string|array $attrs Shortcode attributes.
-	 * @return string The HTML for the MLL shortcode.
+	 * @return string The HTML for the MEETINGLISTLITE shortcode.
 	 */
 	public static function setup_shortcode( string|array $attrs = [] ): string {
 		$attrs = shortcode_atts(
@@ -98,11 +97,11 @@ class MLL {
 			(array) $attrs,
 			'tsml_ui'
 		);
-		$option_data_src   = get_option( 'mll_data_src' );
-		$option_google_key = get_option( 'mll_google_key' );
+		$option_data_src   = esc_url_raw( get_option( 'meetinglistlite_data_src' ) );
+		$option_google_key = sanitize_text_field( get_option( 'meetinglistlite_google_key' ) );
 		$data_src = $attrs['data_src']
 			? esc_url_raw( $attrs['data_src'] )
-			: ( ! empty( $option_data_src ) ? $option_data_src : self::DEFAULT_DATA_SRC );
+			: ( ! empty( $option_data_src ) ? $option_data_src : '' );
 		$google_key = $attrs['google_key']
 			? sanitize_text_field( $attrs['google_key'] )
 			: ( ! empty( $option_google_key ) ? $option_google_key : '' );
@@ -111,8 +110,7 @@ class MLL {
 			: sanitize_text_field( get_option( 'timezone_string' ) );
 		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
 		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
-		$content = '<style>.mll-fullwidth{width:100vw!important;position:relative!important;left:50%!important;margin-left:-50vw!important;padding:20px!important;box-sizing:border-box!important;max-width:none!important}#tsml-ui{width:100%!important;min-height:600px!important}</style>';
-		$content .= '<div class="mll-fullwidth">';
+		$content = '<div class="meetinglistlite-fullwidth">';
 		$content .= '<div id="tsml-ui" data-src="' . esc_url( $data_src ) . '"' . $timezone_attr . $google_key_attr . '></div>';
 		$content .= '</div>';
 		return $content;
@@ -142,7 +140,7 @@ class MLL {
 	 * @return array Configuration array.
 	 */
 	private static function get_tsml_config(): array {
-		$custom_config_json = get_option( 'mll_tsml_config' );
+		$custom_config_json = get_option( 'meetinglistlite_tsml_config' );
 		$default_config = self::get_default_tsml_config();
 
 		if ( empty( $custom_config_json ) ) {
@@ -178,13 +176,13 @@ class MLL {
 		// Check for JSON errors
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			add_settings_error(
-				'mll_tsml_config',
+				'meetinglistlite_tsml_config',
 				'invalid_json',
 				'Invalid JSON format in TSML UI Configuration. Please check your syntax.',
 				'error'
 			);
 			// Return the previous valid value
-			return get_option( 'mll_tsml_config', '' );
+			return get_option( 'meetinglistlite_tsml_config', '' );
 		}
 
 		// Re-encode to ensure clean JSON
@@ -216,30 +214,35 @@ class MLL {
 	 * Enqueue plugin styles and scripts.
 	 *
 	 * This method is responsible for enqueueing the necessary CSS and JavaScript
-	 * files for the MLL plugin to function correctly.
+	 * files for the MEETINGLISTLITE plugin to function correctly.
 	 *
 	 * @return void
 	 */
 	public function assets(): void {
 		wp_enqueue_script(
-			'mll_tsml_ui',
+			'meetinglistlite_tsml_ui',
 			self::TSML_CDN_URL,
 			[],
-			self::MLL_VERSION,
+			self::MEETINGLISTLITE_VERSION,
 			[
 				'in_footer' => true,
 				'strategy' => 'defer',
 			]
 		);
-		$custom_css = get_option( 'mll_custom_css' );
-		if ( ! empty( $custom_css ) ) {
-			wp_register_style( 'mll-custom', false, [], self::MLL_VERSION );
-			wp_enqueue_style( 'mll-custom' );
-			wp_add_inline_style( 'mll-custom', $custom_css );
+		wp_register_style( 'meetinglistlite-base', false, [], self::MEETINGLISTLITE_VERSION );
+		wp_enqueue_style( 'meetinglistlite-base' );
+		$base_css = '.meetinglistlite-fullwidth{width:100vw!important;position:relative!important;left:50%!important;margin-left:-50vw!important;padding:20px!important;box-sizing:border-box!important;max-width:none!important}#tsml-ui{width:100%!important;min-height:600px!important}';
+		wp_add_inline_style( 'meetinglistlite-base', $base_css );
+		$custom_css = (string) get_option( 'meetinglistlite_custom_css', '' );
+		$custom_css = self::sanitize_custom_css( $custom_css ); // Last-mile Escaping
+		if ( '' !== $custom_css ) {
+			wp_register_style( 'meetinglistlite-custom', false, [], self::MEETINGLISTLITE_VERSION );
+			wp_enqueue_style( 'meetinglistlite-custom' );
+			wp_add_inline_style( 'meetinglistlite-custom', $custom_css );
 		}
 		$tsml_ui_config = self::get_tsml_config();
 		wp_localize_script(
-			'mll_tsml_ui',
+			'meetinglistlite_tsml_ui',
 			'tsml_react_config',
 			$tsml_ui_config
 		);
@@ -249,15 +252,15 @@ class MLL {
 	 * Register plugin settings with WordPress.
 	 *
 	 * This method registers the plugin settings with WordPress using the
-	 * `register_setting` function. It defines the settings for 'mll_data_src',
-	 * 'mll_timezone' and 'mll_tsml_config'.
+	 * `register_setting` function. It defines the settings for 'meetinglistlite_data_src',
+	 * 'meetinglistlite_timezone' and 'meetinglistlite_tsml_config'.
 	 *
 	 * @return void
 	 */
 	public static function register_settings(): void {
 		register_setting(
 			self::SETTINGS_GROUP,
-			'mll_data_src',
+			'meetinglistlite_data_src',
 			[
 				'type' => 'string',
 				'sanitize_callback' => 'esc_url_raw',
@@ -265,7 +268,7 @@ class MLL {
 		);
 		register_setting(
 			self::SETTINGS_GROUP,
-			'mll_google_key',
+			'meetinglistlite_google_key',
 			[
 				'type' => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
@@ -273,7 +276,7 @@ class MLL {
 		);
 		register_setting(
 			self::SETTINGS_GROUP,
-			'mll_tsml_config',
+			'meetinglistlite_tsml_config',
 			[
 				'type' => 'string',
 				'sanitize_callback' => [ static::class, 'sanitize_tsml_config' ],
@@ -281,7 +284,7 @@ class MLL {
 		);
 		register_setting(
 			self::SETTINGS_GROUP,
-			'mll_custom_css',
+			'meetinglistlite_custom_css',
 			[
 				'type' => 'string',
 				'sanitize_callback' => [ static::class, 'sanitize_custom_css' ],
@@ -292,7 +295,7 @@ class MLL {
 	/**
 	 * Create the plugin's settings menu in the WordPress admin.
 	 *
-	 * This method adds the MLL plugin's settings page to the WordPress admin menu.
+	 * This method adds the MEETINGLISTLITE plugin's settings page to the WordPress admin menu.
 	 * It also adds a settings link in the list of plugins on the plugins page.
 	 *
 	 * @return void
@@ -302,7 +305,7 @@ class MLL {
 			esc_html__( 'Meeting List Lite Settings', 'meeting-list-lite' ), // Page Title
 			esc_html__( 'Meeting List Lite', 'meeting-list-lite' ),         // Menu Title
 			'manage_options',                                  // Capability
-			'mll',                                            // Menu Slug
+			'meetinglistlite',                                            // Menu Slug
 			[ static::class, 'draw_settings' ]                // Callback function to display the page content
 		);
 		// Add a settings link in the plugins list
@@ -312,7 +315,7 @@ class MLL {
 	/**
 	 * Add a "Settings" link for the plugin in the WordPress admin.
 	 *
-	 * This method adds a "Settings" link for the MLL plugin in the WordPress admin
+	 * This method adds a "Settings" link for the MEETINGLISTLITE plugin in the WordPress admin
 	 * under the plugins list.
 	 *
 	 * @param array $links An array of plugin action links.
@@ -321,7 +324,7 @@ class MLL {
 	 */
 	public static function settings_link( array $links ): array {
 		// Add a "Settings" link for the plugin in the WordPress admin
-		$settings_url = esc_url( admin_url( 'options-general.php?page=mll' ) );
+		$settings_url = esc_url( admin_url( 'options-general.php?page=meetinglistlite' ) );
 		$links[] = "<a href='{$settings_url}'>" . esc_html__( 'Settings', 'meeting-list-lite' ) . '</a>';
 		return $links;
 	}
@@ -329,36 +332,36 @@ class MLL {
 	/**
 	 * Display the plugin's settings page.
 	 *
-	 * This method renders and displays the settings page for the MLL plugin in the WordPress admin.
+	 * This method renders and displays the settings page for the MEETINGLISTLITE plugin in the WordPress admin.
 	 * It includes form fields for configuring plugin settings such as theme, language, layout, and special keytags.
 	 *
 	 * @return void
 	 */
 	public static function draw_settings(): void {
-		$mll_data_src = esc_attr( get_option( 'mll_data_src', self::DEFAULT_DATA_SRC ) );
-		$mll_google_key = esc_attr( get_option( 'mll_google_key' ) );
-		$mll_tsml_config = get_option( 'mll_tsml_config', '' );
-		$mll_custom_css = get_option( 'mll_custom_css', '' );
+		$meetinglistlite_data_src = get_option( 'meetinglistlite_data_src' );
+		$meetinglistlite_google_key = get_option( 'meetinglistlite_google_key' );
+		$meetinglistlite_tsml_config = get_option( 'meetinglistlite_tsml_config', '' );
+		$meetinglistlite_custom_css = get_option( 'meetinglistlite_custom_css', '' );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		?>
 		<div class="wrap">
 			<h2>Meeting List Lite Settings</h2>
 			<form method="post" action="options.php">
-				<?php settings_fields( 'mll-group' ); ?>
-				<?php do_settings_sections( 'mll-group' ); ?>
+				<?php settings_fields( 'meetinglistlite-group' ); ?>
+				<?php do_settings_sections( 'meetinglistlite-group' ); ?>
 				<table class="form-table">
 					<tr style="vertical-align: top;">
 						<th scope="row">Data Source URL</th>
 						<td>
-							<input type="text" name="mll_data_src" id="mll_data_src" size="80" value="<?php echo esc_attr( $mll_data_src ); ?>" /><br />
-							<label for="mll_data_src">Needs to be valid TSML JSON/Sheet</label>
+							<input type="text" name="meetinglistlite_data_src" id="meetinglistlite_data_src" size="80" value="<?php echo esc_attr( $meetinglistlite_data_src ); ?>" /><br />
+							<label for="meetinglistlite_data_src">Needs to be valid TSML JSON/Sheet</label>
 						</td>
 					</tr>
 					<tr style="vertical-align: top;">
 						<th scope="row">Google API Key</th>
 						<td>
-							<input type="text" name="mll_google_key" id="mll_google_key" size="60" value="<?php echo esc_attr( $mll_google_key ); ?>" /><br />
-							<label for="mll_google_key">Only needed if using Google Sheets</label>
+							<input type="text" name="meetinglistlite_google_key" id="meetinglistlite_google_key" size="60" value="<?php echo esc_attr( $meetinglistlite_google_key ); ?>" /><br />
+							<label for="meetinglistlite_google_key">Only needed if using Google Sheets</label>
 						</td>
 					</tr>
 				</table>
@@ -366,14 +369,14 @@ class MLL {
 				<hr style="margin: 30px 0;">
 
 				<h3>Advanced Settings</h3>
-				<p>These settings provide fine-grained control over the TSML UI appearance and behavior. <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#configure" target="_blank">View full configuration documentation</a></p>
+				<p>These settings provide fine-grained control over the TSML UI appearance and behavior. <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#configure" target="_blank" rel="noopener noreferrer">View full configuration documentation</a></p>
 
 				<table class="form-table">
 					<tr style="vertical-align: top;">
 						<th scope="row">TSML UI Configuration</th>
 						<td>
-							<textarea name="mll_tsml_config" id="mll_tsml_config" rows="20" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $mll_tsml_config ); ?></textarea><br />
-							<label for="mll_tsml_config">Custom TSML UI configuration in JSON format. Leave empty to use defaults.</label><br />
+							<textarea name="meetinglistlite_tsml_config" id="meetinglistlite_tsml_config" rows="20" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_tsml_config ); ?></textarea><br />
+							<label for="meetinglistlite_tsml_config">Custom TSML UI configuration in JSON format. Leave empty to use defaults.</label><br />
 							<details>
 								<summary><strong>Show Default Configuration</strong></summary>
 								<pre style="background: #f0f0f0; padding: 10px; margin-top: 10px; overflow: auto; max-height: 400px; font-size: 11px;"><?php echo esc_html( $default_config_json ); ?></pre>
@@ -383,8 +386,8 @@ class MLL {
 					<tr style="vertical-align: top;">
 						<th scope="row">Custom CSS</th>
 						<td>
-							<textarea name="mll_custom_css" id="mll_custom_css" rows="10" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $mll_custom_css ); ?></textarea><br />
-							<label for="mll_custom_css">Additional CSS to customize the appearance of the meeting list.</label><br />
+							<textarea name="meetinglistlite_custom_css" id="meetinglistlite_custom_css" rows="10" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_custom_css ); ?></textarea><br />
+							<label for="meetinglistlite_custom_css">Additional CSS to customize the appearance of the meeting list.</label><br />
 							<p><strong>Example:</strong></p>
 							<pre style="background: #f0f0f0; padding: 10px; margin-top: 5px; font-size: 11px;">/* Change the primary color */
 #tsml-ui .btn-primary {
@@ -406,11 +409,11 @@ class MLL {
 	}
 
 	/**
-	 * Get an instance of the MLL plugin class.
+	 * Get an instance of the MEETINGLISTLITE plugin class.
 	 *
-	 * This method ensures that only one instance of the MLL class is created during the plugin's lifecycle.
+	 * This method ensures that only one instance of the MEETINGLISTLITE class is created during the plugin's lifecycle.
 	 *
-	 * @return self An instance of the MLL class.
+	 * @return self An instance of the MEETINGLISTLITE class.
 	 */
 	public static function get_instance(): self {
 		if ( null == self::$instance ) {
@@ -420,4 +423,4 @@ class MLL {
 	}
 }
 
-MLL::get_instance();
+MEETINGLISTLITE::get_instance();
