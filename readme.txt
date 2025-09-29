@@ -35,7 +35,7 @@ This plugin relies on external services to function properly:
 - **Terms of use**: https://github.com/code4recovery/tsml-ui/blob/main/LICENSE
 - **Privacy policy**: https://code4recovery.org/privacy/
 
-**Note**: You can configure your own data source URL in the plugin settings to avoid using the default external service.
+**Note**: You must configure your own data source URL in the plugin settings or as shortcode attribute for external service to work.
 
 == Changelog ==
 

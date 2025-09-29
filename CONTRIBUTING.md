@@ -18,7 +18,7 @@ To get things going in your local environment:
 
 1. Run the following command to start the development environment:
    ```bash
-   docker-compose up
+   docker compose up
    ```
 
 2. Set up your WordPress installation and remember your admin password.
