@@ -44,6 +44,11 @@ To display your meetings, simply add the `[tsml_ui]` shortcode to any page or po
 Basic: `[tsml_ui]`
 With custom data source: `[tsml_ui data_source="https://your-url.com/meetings.json"]`
 
+== Screenshots ==
+
+1. Plugin settings
+1. Meeting map
+
 == Frequently Asked Questions ==
 
 = What's the difference between this and 12 Step Meeting List? =
@@ -51,11 +56,6 @@ With custom data source: `[tsml_ui data_source="https://your-url.com/meetings.js
 12 Step Meeting List is a full-featured plugin that stores meeting data in your WordPress database and includes editing
 capabilities, geocoding, and data management tools. Meeting List Lite is designed for service bodies who maintain their meeting
 data elsewhere and just need to display it on their WordPress site.
-
-== Screenshots ==
-
-1. Plugin settings
-1. Meeting map
 
 = What data formats are supported? =
 
