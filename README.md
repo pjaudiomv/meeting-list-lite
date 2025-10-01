@@ -52,6 +52,11 @@ Service bodies who:
 [tsml_ui data_source="https://your-url.com/meetings.json"]
 ```
 
+## Screenshots
+
+![Plugin Settings](assets/screenshot-1.png "Plugin Settings")
+![Plugin Settings](assets/screenshot-2.png "Meeting map")
+
 ## Frequently Asked Questions
 
 <details>

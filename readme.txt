@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/meeting-list-lite/
 Tags: meeting list, recovery, addiction
 Requires PHP: 8.0
 Tested up to: 6.8
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,11 @@ With custom data source: `[tsml_ui data_source="https://your-url.com/meetings.js
 capabilities, geocoding, and data management tools. Meeting List Lite is designed for service bodies who maintain their meeting
 data elsewhere and just need to display it on their WordPress site.
 
+== Screenshots ==
+
+1. Plugin settings
+1. Meeting map
+
 = What data formats are supported? =
 
 The plugin supports JSON feeds and Google Sheets that conform to the [TSML specification](https://github.com/code4recovery/spec).
@@ -86,6 +91,10 @@ This plugin relies on external services to function properly:
 - No data is sent to your data source; the plugin only reads from it
 
 == Changelog ==
+
+= 1.0.2 =
+
+* Add plugin screenshots
 
 = 1.0.1 =
 

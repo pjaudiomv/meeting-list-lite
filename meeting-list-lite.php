@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
