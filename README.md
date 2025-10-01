@@ -54,8 +54,16 @@ Service bodies who:
 
 ## Screenshots
 
+<details>
+<summary>Plugin Settings</summary>
+
 ![Plugin Settings](assets/screenshot-1.png "Plugin Settings")
+</details>
+<details>
+<summary>Meeting map</summary>
+
 ![Plugin Settings](assets/screenshot-2.png "Meeting map")
+</details>
 
 ## Frequently Asked Questions
 
