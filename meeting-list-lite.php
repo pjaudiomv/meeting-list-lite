@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -107,7 +107,7 @@ class MEETINGLISTLITE {
 			: ( ! empty( $option_google_key ) ? $option_google_key : '' );
 		$timezone = $attrs['timezone']
 			? sanitize_text_field( $attrs['timezone'] )
-			: sanitize_text_field( get_option( 'timezone_string' ) );
+			: sanitize_text_field( get_option( 'timezone_string', 'America/New_York' ) );
 		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
 		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
 		$content = '<div class="meetinglistlite-fullwidth">';
@@ -253,7 +253,7 @@ class MEETINGLISTLITE {
 	 *
 	 * This method registers the plugin settings with WordPress using the
 	 * `register_setting` function. It defines the settings for 'meetinglistlite_data_src',
-	 * 'meetinglistlite_timezone' and 'meetinglistlite_tsml_config'.
+	 * 'meetinglistlite_tsml_config', 'meetinglistlite_google_key' and 'meetinglistlite_custom_css'.
 	 *
 	 * @return void
 	 */
