@@ -132,6 +132,14 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.0.3
+
+- Updated note about setting timezone.
+
+### 1.0.2
+
+- Add plugin screenshots
+
 ### 1.0.1
 
 - Support for JSON and Google Sheet data sources
