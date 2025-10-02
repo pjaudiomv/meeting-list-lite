@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/meeting-list-lite/
 Tags: meeting list, recovery, addiction
 Requires PHP: 8.0
 Tested up to: 6.8
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,13 +33,13 @@ Your data source must follow the [TSML specification](https://github.com/code4re
 
 To display your meetings, simply add the `[tsml_ui]` shortcode to any page or post, and configure your data source URL in the plugin settings.
 
-**Important:** Your WordPress timezone should be set to a valid IANA timezone identifier in Settings → General. See the [PHP timezone list](https://www.php.net/manual/en/timezones.php) for valid values. Generic UTC offsets (like "UTC+5") are not sufficient. If not set, the plugin defaults to "America/New_York". You can also override the timezone using the `timezone` shortcode attribute.
+**Important:** Your WordPress timezone should be set to a valid IANA timezone identifier in Settings → General. See the [PHP timezone list](https://www.php.net/manual/en/timezones.php) for valid values. Generic UTC offsets (like "UTC+5") are not sufficient. You can also override the timezone using the `timezone` shortcode attribute.
 
 == Installation ==
 
 1. Upload the `meeting-list-lite` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. **Important:** Ensure your WordPress timezone is set to a valid IANA timezone (e.g., "America/New_York") in Settings → General for accurate meeting times. If not configured, the plugin defaults to "America/New_York". See https://www.php.net/manual/en/timezones.php for a complete list.
+3. **Important:** Ensure your WordPress timezone is set to a valid IANA timezone (e.g., "America/New_York") in Settings → General for accurate meeting times. You can also configure through shortcode attribute. See https://www.php.net/manual/en/timezones.php for a complete list.
 4. Go to Settings → Meeting List Lite and configure your data source URL
 5. Add the `[tsml_ui]` shortcode to any WordPress page or post where you want meetings displayed
 
@@ -80,7 +80,7 @@ Go to Settings → Meeting List Lite in your WordPress dashboard, or use the `da
 
 = Why does my WordPress timezone need to be set to a valid IANA timezone? =
 
-The plugin requires a proper IANA timezone identifier (like "America/New_York" or "Europe/London") to correctly display meeting times. Generic UTC offsets (like "UTC+5") are not sufficient. You can set this in Settings → General, override it with the `timezone` shortcode attribute, or let it default to "America/New_York". Find a complete list of valid timezones at https://www.php.net/manual/en/timezones.php
+The plugin requires a proper IANA timezone identifier (like "America/New_York" or "Europe/London") to correctly display meeting times. Generic UTC offsets (like "UTC+5") are not sufficient. You can set this in Settings → General, override it with the `timezone` shortcode attribute. Find a complete list of valid timezones at https://www.php.net/manual/en/timezones.php
 
 == External services ==
 
@@ -100,6 +100,10 @@ This plugin relies on external services to function properly:
 - No data is sent to your data source; the plugin only reads from it
 
 == Changelog ==
+
+= 1.0.4 =
+
+* Revert setting of default timezone.
 
 = 1.0.3 =
 
