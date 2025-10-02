@@ -107,7 +107,7 @@ class MEETINGLISTLITE {
 			: ( ! empty( $option_google_key ) ? $option_google_key : '' );
 		$timezone = $attrs['timezone']
 			? sanitize_text_field( $attrs['timezone'] )
-			: sanitize_text_field( get_option( 'timezone_string', 'America/New_York' ) );
+			: sanitize_text_field( get_option( 'timezone_string' ) );
 		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
 		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
 		$content = '<div class="meetinglistlite-fullwidth">';
