@@ -11,3 +11,4 @@ CONTRIBUTING.md export-ignore
 README.md export-ignore
 /.github export-ignore
 /docs  export-ignore
+/api-docs export-ignore
