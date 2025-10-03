@@ -20,7 +20,7 @@ clean:  ## clean
 
 .PHONY: clean-docs
 clean-docs:  ## Clean documentation builds
-	rm -rf api-docs docs/build docs/.docusaurus docs/static/api
+	rm -rf api-docs docs/build docs/build-dev docs/.docusaurus docs/static/api
 
 $(VENDOR_AUTOLOAD):
 	composer install --prefer-dist --no-progress
@@ -44,11 +44,20 @@ api-docs/index.html: meeting-list-lite.php uninstall.php
 docs/build/index.html: docs/package.json docs/docusaurus.config.ts docs/sidebars.ts $(shell find docs/docs docs/src -name '*.md' -o -name '*.tsx' -o -name '*.ts' 2>/dev/null)
 	cd docs && npm ci && npm run build
 
+# Docusaurus development build target - uses baseUrl = '/'
+docs/build-dev/index.html: docs/package.json docs/docusaurus.config.ts docs/sidebars.ts $(shell find docs/docs docs/src -name '*.md' -o -name '*.tsx' -o -name '*.ts' 2>/dev/null)
+	cd docs && npm ci && DOCUSAURUS_LOCAL_DEV=1 npm run build -- --out-dir build-dev
+
 # Combined docs target - depends on both API and Docusaurus builds
 docs/build/api/index.html: api-docs/index.html docs/build/index.html
 	mkdir -p docs/build/api docs/static/api
 	cp -r api-docs/* docs/build/api/
 	cp -r api-docs/* docs/static/api/
+
+# Combined development docs target
+docs/build-dev/api/index.html: api-docs/index.html docs/build-dev/index.html
+	mkdir -p docs/build-dev/api
+	cp -r api-docs/* docs/build-dev/api/
 
 .PHONY: api-docs
 api-docs: api-docs/index.html  ## Generate PHP API Documentation
@@ -68,11 +77,11 @@ docs: docs/build/api/index.html  ## Generate both API docs and Docusaurus docume
 	@echo "Combined docs with API: ./docs/build/ (includes /api/ route)"
 
 .PHONY: preview
-preview: docs/build/api/index.html  ## Build and serve documentation locally with Python (recommended)
+preview: docs/build-dev/api/index.html  ## Build and serve documentation locally with Python (recommended)
 	@echo "Starting local server at http://localhost:3001"
 	@echo "Opening documentation in browser..."
 	@(sleep 2 && open http://localhost:3001/) &
-	cd docs/build && python3 -m http.server 3001
+	cd docs/build-dev && python3 -m http.server 3001
 
 .PHONY: preview-python
 preview-python: docs/build/api/index.html  ## Build and serve documentation locally with Python

@@ -9,3 +9,4 @@ build/
 *.zip
 .phpdoc/
 api-docs/
+docs/build-dev/
