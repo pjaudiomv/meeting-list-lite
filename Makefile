@@ -20,7 +20,7 @@ clean:  ## clean
 
 .PHONY: clean-docs
 clean-docs:  ## Clean documentation builds
-	rm -rf api-docs docs/build docs/.docusaurus
+	rm -rf api-docs docs/build docs/.docusaurus docs/static/api
 
 $(VENDOR_AUTOLOAD):
 	composer install --prefer-dist --no-progress
@@ -46,8 +46,9 @@ docs/build/index.html: docs/package.json docs/docusaurus.config.ts docs/sidebars
 
 # Combined docs target - depends on both API and Docusaurus builds
 docs/build/api/index.html: api-docs/index.html docs/build/index.html
-	mkdir -p docs/build/api
+	mkdir -p docs/build/api docs/static/api
 	cp -r api-docs/* docs/build/api/
+	cp -r api-docs/* docs/static/api/
 
 .PHONY: api-docs
 api-docs: api-docs/index.html  ## Generate PHP API Documentation
@@ -67,7 +68,14 @@ docs: docs/build/api/index.html  ## Generate both API docs and Docusaurus docume
 	@echo "Combined docs with API: ./docs/build/ (includes /api/ route)"
 
 .PHONY: preview
-preview: docs/build/api/index.html  ## Build and serve documentation locally with Python
+preview: docs/build/api/index.html  ## Build and serve documentation locally with Python (recommended)
+	@echo "Starting local server at http://localhost:3001"
+	@echo "Opening documentation in browser..."
+	@(sleep 2 && open http://localhost:3001/) &
+	cd docs/build && python3 -m http.server 3001
+
+.PHONY: preview-python
+preview-python: docs/build/api/index.html  ## Build and serve documentation locally with Python
 	@echo "Starting local server at http://localhost:8100"
 	@echo "API docs will be available at http://localhost:8100/api/"
 	cd docs/build && python3 -m http.server 8100

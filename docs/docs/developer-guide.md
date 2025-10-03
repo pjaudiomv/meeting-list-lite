@@ -8,7 +8,7 @@ Information for developers who want to contribute to Meeting List Lite or unders
 
 ## API Documentation
 
-The complete PHP API documentation is available at [/api/](/api/) and provides detailed information about:
+The complete PHP API documentation is available at [API Reference](../api) and provides detailed information about:
 
 - **Classes**: All plugin classes with their methods and properties
 - **Functions**: Global functions and utilities
@@ -249,7 +249,7 @@ https://yoursite.com/meetings/?debug=1
 ## Support
 
 For development questions:
-- Check the [API documentation](/api/)
+- Check the [API documentation](../api)
 - Review existing [GitHub issues](https://github.com/pjaudiomv/meeting-list-lite/issues)
 - Create a new issue with detailed information
 
