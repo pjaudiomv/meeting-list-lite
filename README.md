@@ -132,6 +132,10 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.0.5
+
+* Change css customization example.
+
 ### 1.0.4
 
 * Revert setting of default timezone.

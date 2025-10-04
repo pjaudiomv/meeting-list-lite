@@ -10,3 +10,4 @@ build/
 .phpdoc/
 api-docs/
 docs/build-dev/
+docs/static/api/
