@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.0.5
+ * Version:           1.0.6
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -91,27 +91,21 @@ class MEETINGLISTLITE {
 		$attrs = shortcode_atts(
 			[
 				'data_src'   => '',
-				'google_key' => '',
 				'timezone'   => '',
 			],
 			(array) $attrs,
 			'tsml_ui'
 		);
 		$option_data_src   = esc_url_raw( get_option( 'meetinglistlite_data_src' ) );
-		$option_google_key = sanitize_text_field( get_option( 'meetinglistlite_google_key' ) );
 		$data_src = $attrs['data_src']
 			? esc_url_raw( $attrs['data_src'] )
 			: ( ! empty( $option_data_src ) ? $option_data_src : '' );
-		$google_key = $attrs['google_key']
-			? sanitize_text_field( $attrs['google_key'] )
-			: ( ! empty( $option_google_key ) ? $option_google_key : '' );
 		$timezone = $attrs['timezone']
 			? sanitize_text_field( $attrs['timezone'] )
 			: sanitize_text_field( get_option( 'timezone_string' ) );
 		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
-		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
 		$content = '<div class="meetinglistlite-fullwidth">';
-		$content .= '<div id="tsml-ui" data-src="' . esc_url( $data_src ) . '"' . $timezone_attr . $google_key_attr . '></div>';
+		$content .= '<div id="tsml-ui" data-src="' . esc_url( $data_src ) . '"' . $timezone_attr . '></div>';
 		$content .= '</div>';
 		return $content;
 	}
@@ -253,7 +247,7 @@ class MEETINGLISTLITE {
 	 *
 	 * This method registers the plugin settings with WordPress using the
 	 * `register_setting` function. It defines the settings for 'meetinglistlite_data_src',
-	 * 'meetinglistlite_tsml_config', 'meetinglistlite_google_key' and 'meetinglistlite_custom_css'.
+	 * 'meetinglistlite_tsml_config', and 'meetinglistlite_custom_css'.
 	 *
 	 * @return void
 	 */
@@ -264,14 +258,6 @@ class MEETINGLISTLITE {
 			[
 				'type' => 'string',
 				'sanitize_callback' => 'esc_url_raw',
-			]
-		);
-		register_setting(
-			self::SETTINGS_GROUP,
-			'meetinglistlite_google_key',
-			[
-				'type' => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
 			]
 		);
 		register_setting(
@@ -339,7 +325,6 @@ class MEETINGLISTLITE {
 	 */
 	public static function draw_settings(): void {
 		$meetinglistlite_data_src = get_option( 'meetinglistlite_data_src' );
-		$meetinglistlite_google_key = get_option( 'meetinglistlite_google_key' );
 		$meetinglistlite_tsml_config = get_option( 'meetinglistlite_tsml_config', '' );
 		$meetinglistlite_custom_css = get_option( 'meetinglistlite_custom_css', '' );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
@@ -355,13 +340,6 @@ class MEETINGLISTLITE {
 						<td>
 							<input type="text" name="meetinglistlite_data_src" id="meetinglistlite_data_src" size="80" value="<?php echo esc_attr( $meetinglistlite_data_src ); ?>" /><br />
 							<label for="meetinglistlite_data_src">Needs to be valid TSML JSON/Sheet</label>
-						</td>
-					</tr>
-					<tr style="vertical-align: top;">
-						<th scope="row">Google API Key</th>
-						<td>
-							<input type="text" name="meetinglistlite_google_key" id="meetinglistlite_google_key" size="60" value="<?php echo esc_attr( $meetinglistlite_google_key ); ?>" /><br />
-							<label for="meetinglistlite_google_key">Only needed if using Google Sheets</label>
 						</td>
 					</tr>
 				</table>
@@ -387,7 +365,7 @@ class MEETINGLISTLITE {
 						<th scope="row">Custom CSS</th>
 						<td>
 							<textarea name="meetinglistlite_custom_css" id="meetinglistlite_custom_css" rows="10" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_custom_css ); ?></textarea><br />
-							<label for="meetinglistlite_custom_css">Additional CSS to customize the appearance of the meeting list.</label><br />
+							<label for="meetinglistlite_custom_css">Additional CSS to customize the appearance of the meeting list.</label> <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#customize-theme-colors" target="_blank" rel="noopener noreferrer">View TSML UI CSS Documentation</a><br />
 							<p><strong>Example:</strong></p>
 							<pre style="background: #f0f0f0; padding: 10px; margin-top: 5px; font-size: 11px;">/* Customize theme colors */
 #tsml-ui {

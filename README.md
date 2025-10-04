@@ -132,6 +132,10 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.0.6
+
+* Remove unneeded google key setting.
+
 ### 1.0.5
 
 * Change css customization example.

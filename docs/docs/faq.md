@@ -175,10 +175,8 @@ Common causes:
 ### Maps aren't working
 
 This is usually because:
-1. No Google Maps API key configured
-2. Missing latitude/longitude coordinates in your data
-3. Google Maps API key restrictions
-4. JavaScript errors (check browser console)
+1. Missing latitude/longitude coordinates in your data
+2. JavaScript errors (check browser console)
 
 ### Getting JavaScript errors
 

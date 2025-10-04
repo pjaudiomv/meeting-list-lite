@@ -25,7 +25,6 @@ You can customize the meeting list display by adding attributes to the shortcode
 | Attribute | Description | Example |
 |-----------|-------------|---------|
 | `data_src` | Override the data source URL | `data_src="https://example.com/meetings.json"` |
-| `google_key` | Override the Google Maps API key | `google_key="AIzaSyC4K..."` |
 | `timezone` | Override the timezone | `timezone="America/New_York"` |
 
 ### Examples
@@ -42,7 +41,7 @@ You can customize the meeting list display by adding attributes to the shortcode
 
 **Shortcode with all attributes:**
 ```
-[tsml_ui data_src="https://mysite.com/meetings.json" google_key="AIzaSyC4K..." timezone="America/Los_Angeles"]
+[tsml_ui data_src="https://mysite.com/meetings.json" timezone="America/Los_Angeles"]
 ```
 
 ## Where to Use the Shortcode
