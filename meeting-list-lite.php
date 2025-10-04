@@ -339,7 +339,7 @@ class MEETINGLISTLITE {
 						<th scope="row">Data Source URL</th>
 						<td>
 							<input type="text" name="meetinglistlite_data_src" id="meetinglistlite_data_src" size="80" value="<?php echo esc_attr( $meetinglistlite_data_src ); ?>" /><br />
-							<label for="meetinglistlite_data_src">Needs to be valid TSML JSON/Sheet</label>
+							<label for="meetinglistlite_data_src">Needs to be valid TSML JSON/Sheet. This can be a comma-separated string with multiple feed URLs.</label>
 						</td>
 					</tr>
 				</table>
