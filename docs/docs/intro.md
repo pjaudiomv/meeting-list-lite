@@ -13,18 +13,20 @@ Meeting List Lite is a streamlined solution for displaying 12-step meeting infor
 ## Perfect For
 
 Service bodies who:
-- Maintain their meeting data in a Google Sheet, JSON feed, or another system
+- **Use BMLT Root Server 4.0.0+** - Built-in TSML compatibility!
+- Maintain their meeting data in BMLT, Google Sheets, JSON feeds, or another system
 - Don't need to edit meeting information within WordPress
 - Want the familiar TSML UI interface without the overhead of data management
 - Already have geocoded meeting data (latitude/longitude for in-person meetings)
 
 ## Key Features
 
+- **BMLT Integration**: Works seamlessly with BMLT Root Server 4.0.0+ via built-in TSML output
 - **TSML UI Integration**: Displays meetings using the same TSML UI interface as 12 Step Meeting List
-- **Multiple Data Sources**: Supports JSON feeds and Google Sheets that follow the [TSML spec](https://github.com/code4recovery/spec)
+- **Multiple Data Sources**: Supports BMLT servers, JSON feeds, and Google Sheets that follow the [TSML spec](https://github.com/code4recovery/spec)
 - **No Database Required**: Your data source is the single source of truth
 - **Lightweight**: Easy to set up with minimal overhead
-- **TSML Compatible**: Fully compatible with the TSML data format
+- **Real-time Data**: When using BMLT, always shows current meeting information
 
 ## Requirements
 

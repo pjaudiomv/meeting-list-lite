@@ -16,7 +16,7 @@ This is a WordPress plugin for displaying 12-Step Meeting Information.
 Meeting List Lite is a streamlined solution for displaying 12-step meeting information on your WordPress site when your meeting data is maintained elsewhere. Unlike the full 12 Step Meeting List plugin, this "lite" version doesn't include a database or editing capabilities, it simply displays meetings from your existing data source.
 
 **Perfect for service bodies who:**
-* Maintain their meeting data in a Google Sheet, JSON feed, or another system
+* Maintain their meeting data in a Google Sheet, JSON feed, BMLT or another system
 * Don't need to edit meeting information within WordPress
 * Want the familiar TSML UI interface without the overhead of data management
 * Already have geocoded meeting data (latitude/longitude for in-person meetings)

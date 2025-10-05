@@ -16,6 +16,30 @@ The simplest way to display meetings is with the basic shortcode:
 
 This will use the global settings configured in **Settings** → **Meeting List Lite**.
 
+### Quick BMLT Setup
+
+If you're using BMLT Root Server 4.0.0+:
+
+1. **Get your BMLT TSML URL:**
+   - Go to: `https://your-bmlt-server.org/main_server/semantic`
+   - Build your query (select service body, filters, etc.)
+   - Replace `/json/` with `/tsml/` in the generated URL
+
+2. **Configure the plugin:**
+   - **Settings** → **Meeting List Lite**
+   - Paste your TSML URL in **Data Source URL**
+   - Save
+
+3. **Add to page:**
+   ```
+   [tsml_ui]
+   ```
+
+**Example BMLT URL:**
+```
+https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006
+```
+
 ## Shortcode Attributes
 
 You can customize the meeting list display by adding attributes to the shortcode.

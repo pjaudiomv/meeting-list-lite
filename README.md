@@ -13,7 +13,7 @@ Meeting List Lite is a streamlined solution for displaying 12-step meeting infor
 ## Perfect For
 
 Service bodies who:
-- Maintain their meeting data in a Google Sheet, JSON feed, or another system
+- Maintain their meeting data in a Google Sheet, JSON feed, BMLT or another system
 - Don't need to edit meeting information within WordPress
 - Want the familiar TSML UI interface without the overhead of data management
 - Already have geocoded meeting data (latitude/longitude for in-person meetings)

@@ -8,21 +8,109 @@ Practical examples of using Meeting List Lite in different scenarios.
 
 ## Basic Meeting Display
 
-The simplest implementation uses global settings:
+### Using BMLT (Recommended)
 
-### 1. Configure Plugin Settings
+The easiest way to get started is with a BMLT server:
+
+**1. Build your BMLT URL:**
+- Go to your BMLT server's semantic page: `https://your-bmlt-server.org/main_server/semantic`
+- Select your filters (service body, days, etc.)
+- Copy the generated URL and replace `/json/` with `/tsml/`
+
+**2. Configure plugin:**
+- Go to **Settings** → **Meeting List Lite**
+- Enter your BMLT TSML URL
+- Save settings
+
+**3. Add shortcode:**
+```
+[tsml_ui]
+```
+
+**Example BMLT setup:**
+```
+BMLT URL: https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006
+```
+
+### Using Custom JSON
+
+For non-BMLT data sources:
+
+**1. Configure Plugin Settings**
 - Go to **Settings** → **Meeting List Lite**
 - Set **Data Source URL**: `https://your-site.com/meetings.json`
 - Save settings
 
-### 2. Create a Page
+**2. Create a Page**
 Create a new page called "Meetings" and add:
 ```
 [tsml_ui]
 ```
 
-### 3. Result
+**3. Result**
 Your meetings will display with search, filters, and maps (if coordinates are provided).
+
+## BMLT Examples
+
+### Service Body Filtering
+
+Show meetings from specific BMLT service bodies:
+
+**Single Service Body:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006"]
+```
+
+**Multiple Service Bodies:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006,1007,1008"]
+```
+
+**Different Areas on Different Pages:**
+
+**Page 1: Brooklyn Area**
+```
+[tsml_ui data_src="https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006"]
+```
+
+**Page 2: Manhattan Area**
+```
+[tsml_ui data_src="https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1007"]
+```
+
+### BMLT Format Filtering
+
+**Open Meetings Only:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&formats=17"]
+```
+
+**Step Study Meetings:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&formats=54"]
+```
+
+**Online Meetings:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&formats=VM"]
+```
+
+### BMLT Time-Based Filtering
+
+**Evening Meetings (after 6 PM):**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&StartsAfterH=18"]
+```
+
+**Weekday Meetings Only:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&weekdays=1,2,3,4,5"]
+```
+
+**Weekend Meetings:**
+```
+[tsml_ui data_src="https://your-bmlt.org/main_server/client_interface/tsml/?switcher=GetSearchResults&weekdays=0,6"]
+```
 
 ## Multiple Meeting Lists
 

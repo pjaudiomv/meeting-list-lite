@@ -94,6 +94,144 @@ Add custom CSS to style the meeting list interface. This CSS will be applied onl
 }
 ```
 
+## BMLT Integration
+
+### Using with BMLT Root Server 4.0.0+
+
+The BMLT Root Server version 4.0.0 and later includes built-in TSML-compatible JSON output, making it perfect for use with Meeting List Lite.
+
+**Why use BMLT with Meeting List Lite?**
+- ✅ **Real-time data** - Always shows current meeting information
+- ✅ **No maintenance** - Your area maintains the data in BMLT
+- ✅ **Automatic geocoding** - BMLT handles address validation and coordinates
+- ✅ **Format standardization** - Uses NAWS format codes
+- ✅ **Service body filtering** - Show only your area's meetings
+- ✅ **Built-in TSML compatibility** - No data conversion needed
+
+### Building Your BMLT Query
+
+**Step 1: Use the BMLT Query Builder**
+
+Every BMLT server has a built-in query builder to help you create the perfect URL:
+
+1. Go to your BMLT server's semantic page: `https://your-bmlt-server.org/main_server/semantic`
+2. Use the form to select your desired filters:
+   - Service bodies (areas/regions)
+   - Weekdays
+   - Meeting formats
+   - Times
+   - Search terms
+3. The builder will generate a URL like: `https://your-bmlt-server.org/main_server/client_interface/json/?switcher=GetSearchResults&services=1006`
+
+**Step 2: Convert to TSML Format**
+
+Replace `/json/` with `/tsml/` in your generated URL:
+
+```diff
+- https://your-bmlt-server.org/main_server/client_interface/json/?switcher=GetSearchResults&services=1006
++ https://your-bmlt-server.org/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006
+```
+
+**Step 3: Use in Meeting List Lite**
+
+1. Copy your TSML URL
+2. Go to **Settings** → **Meeting List Lite**
+3. Paste the URL in the **Data Source URL** field
+4. Save settings
+5. Add `[tsml_ui]` to any page
+
+### Example BMLT URLs
+
+**All meetings from a BMLT server:**
+```
+https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults
+```
+
+**Specific service body meetings:**
+```
+https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006
+```
+
+**Multiple service bodies:**
+```
+https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006,1007,1008
+```
+
+**Weekday meetings only (Monday-Friday):**
+```
+https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&weekdays=1,2,3,4,5
+```
+
+**Open meetings only:**
+```
+https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&formats=17
+```
+
+### Common BMLT Filters
+
+| Parameter | Description | Example |
+|-----------|-------------|----------|
+| `services` | Service body ID(s) | `services=1006` or `services=1006,1007` |
+| `weekdays` | Days of week (0=Sunday) | `weekdays=1,2,3,4,5` |
+| `formats` | Meeting format ID(s) | `formats=17,54` |
+| `meeting_keys` | Specific meeting ID(s) | `meeting_keys=12345,12346` |
+| `SearchString` | Text search | `SearchString=meditation` |
+| `StartsAfterH` | Meetings starting after hour | `StartsAfterH=18` |
+| `StartsAfterM` | Meetings starting after minute | `StartsAfterM=30` |
+| `EndsBeforeH` | Meetings ending before hour | `EndsBeforeH=21` |
+| `EndsBeforeM` | Meetings ending before minute | `EndsBeforeM=0` |
+
+### Finding Your Service Body ID
+
+1. Go to your BMLT server's semantic query builder
+2. Look for your area/region in the "Service Bodies" dropdown
+3. The ID number will be shown or you can inspect the form to find it
+4. Alternatively, contact your area service committee
+
+### BMLT Format Mapping
+
+BMLT automatically maps meeting formats to TSML-compatible codes:
+
+- **Basic Types**: `O` (Open), `C` (Closed)
+- **Accessibility**: `WC` (Wheelchair accessible)
+- **Study Types**: `STEP` (Step Study), `TRAD` (Traditions), `BEG` (Beginners)
+- **Online/Hybrid**: `ONL` (Online), `HY` (Hybrid)
+- **Special Formats**: `NS` (Non-smoking), `JFT` (Just for Today)
+- **Demographics**: `M` (Men only), `W` (Women only)
+
+### Live Example
+
+See BMLT + Meeting List Lite in action at:
+[https://wordpress.aws.bmlt.app/meetings/](https://wordpress.aws.bmlt.app/meetings/)
+
+### Requirements & Limitations
+
+**Requirements:**
+- BMLT Root Server 4.0.0 or later
+- Your meetings must be maintained in BMLT
+- Valid IANA timezone in WordPress settings
+
+**Limitations:**
+- Only NAWS format codes are supported (non-NAWS formats are filtered out)
+- Some BMLT-specific fields (train, bus, comments) may not display in the TSML UI
+- Requires internet connection to fetch meeting data
+
+### Troubleshooting BMLT Integration
+
+**No meetings showing:**
+1. Verify your BMLT server URL is correct
+2. Check that your service body ID exists
+3. Test your URL directly in a browser - you should see JSON data
+4. Ensure your BMLT server is version 4.0.0 or later
+
+**Meetings appear but missing information:**
+- Some BMLT fields don't map directly to TSML
+- Check that your meetings have latitude/longitude coordinates in BMLT for maps
+
+**Format codes not displaying correctly:**
+- Only NAWS-compatible format codes will appear
+- Custom local formats may be filtered out
+
 ## Data Source Requirements
 
 ### TSML Specification
