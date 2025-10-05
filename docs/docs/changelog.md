@@ -8,11 +8,16 @@ All notable changes to Meeting List Lite are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.6] - 2024-10-04
+
+## [1.0.7] - 2025-10-05
+### Changed
+- Remove base css and just use as default custom css.
+
+## [1.0.6] - 2025-10-04
 ### Changed
 - Remove unneeded google key setting.
 
-## [1.0.4] - 2024-10-02
+## [1.0.4] - 2025-10-02
 
 ### Changed
 - Reverted setting of default timezone to avoid conflicts with WordPress timezone settings
@@ -21,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Users should ensure their WordPress timezone is set to a valid IANA timezone identifier in Settings → General
 - Timezone can be overridden per shortcode using the `timezone` attribute
 
-## [1.0.3] - 2024-09-30
+## [1.0.3] - 2025-09-30
 
 ### Changed
 - Updated documentation and notes about timezone requirements
@@ -31,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Enhanced README with clearer timezone setup instructions
 - Added more detailed timezone troubleshooting information
 
-## [1.0.2] - 2024-09-29
+## [1.0.2] - 2025-09-29
 
 ### Added
 - Plugin screenshots for WordPress repository
@@ -41,7 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - WordPress Plugin Directory assets
 - Better visual representation of plugin capabilities
 
-## [1.0.1] - 2024-09-28
+## [1.0.1] - 2025-09-28
 
 ### Added
 - Support for JSON and Google Sheets data sources
@@ -63,7 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Secure handling of external data sources
 - Proper escaping of output data
 
-## [1.0.0] - 2024-09-15
+## [1.0.0] - 2025-09-15
 
 ### Added
 - Initial release of Meeting List Lite
