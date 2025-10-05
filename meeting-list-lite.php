@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.0.6
+ * Version:           1.0.7
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -111,6 +111,29 @@ class MEETINGLISTLITE {
 	}
 
 	/**
+	 * Get default base CSS.
+	 *
+	 * @return string Default CSS styles.
+	 */
+	private static function get_default_css(): string {
+		return '.meetinglistlite-fullwidth {
+	width: 100vw !important;
+	position: relative !important;
+	left: 50% !important;
+	margin-left: -50vw !important;
+	padding: 20px !important;
+	box-sizing: border-box !important;
+	max-width: none !important;
+}
+
+#tsml-ui {
+	width: 100% !important;
+	min-height: 600px !important;
+}';
+	}
+
+
+	/**
 	 * Get default TSML UI configuration.
 	 * We do this because default config is program specific.
 	 * @return array Default configuration array.
@@ -193,14 +216,22 @@ class MEETINGLISTLITE {
 		if ( empty( trim( $input ) ) ) {
 			return '';
 		}
-		// Basic CSS sanitization - remove script tags and potentially dangerous content
+		// Basic CSS sanitization - remove potentially dangerous content
 		$css = wp_strip_all_tags( $input );
-		$css = preg_replace( '/javascript:/i', '', $css );
+
+		// Remove dangerous protocols from url() functions
+		$css = preg_replace( '/url\s*\(\s*["\']?\s*javascript:/i', 'url(', $css );
+		$css = preg_replace( '/url\s*\(\s*["\']?\s*data:/i', 'url(', $css );
+		$css = preg_replace( '/url\s*\(\s*["\']?\s*vbscript:/i', 'url(', $css );
+
+		// Remove CSS expressions and other dangerous constructs
 		$css = preg_replace( '/expression\s*\(/i', '', $css );
-		$css = preg_replace( '/vbscript:/i', '', $css );
+		$css = preg_replace( '/-moz-binding\s*:/i', '', $css );
+		$css = preg_replace( '/behaviour\s*:/i', '', $css );
+
+		// Remove @import to prevent loading external stylesheets
 		$css = preg_replace( '/@import/i', '', $css );
-		$css = preg_replace( '/url\s*\([^)]*\)/i', '', $css );
-		$css = preg_replace( '/@supports\b/i', '', $css );
+
 		return $css;
 	}
 
@@ -223,17 +254,17 @@ class MEETINGLISTLITE {
 				'strategy' => 'defer',
 			]
 		);
-		wp_register_style( 'meetinglistlite-base', false, [], self::MEETINGLISTLITE_VERSION );
-		wp_enqueue_style( 'meetinglistlite-base' );
-		$base_css = '.meetinglistlite-fullwidth{width:100vw!important;position:relative!important;left:50%!important;margin-left:-50vw!important;padding:20px!important;box-sizing:border-box!important;max-width:none!important}#tsml-ui{width:100%!important;min-height:600px!important}';
-		wp_add_inline_style( 'meetinglistlite-base', $base_css );
+
 		$custom_css = (string) get_option( 'meetinglistlite_custom_css', '' );
-		$custom_css = self::sanitize_custom_css( $custom_css ); // Last-mile Escaping
-		if ( '' !== $custom_css ) {
-			wp_register_style( 'meetinglistlite-custom', false, [], self::MEETINGLISTLITE_VERSION );
-			wp_enqueue_style( 'meetinglistlite-custom' );
-			wp_add_inline_style( 'meetinglistlite-custom', $custom_css );
+		// If custom CSS is empty, use default CSS
+		if ( '' === $custom_css ) {
+			$custom_css = self::get_default_css();
 		}
+		$custom_css = self::sanitize_custom_css( $custom_css ); // Last-mile Escaping
+		wp_register_style( 'meetinglistlite-custom', false, [], self::MEETINGLISTLITE_VERSION );
+		wp_enqueue_style( 'meetinglistlite-custom' );
+		wp_add_inline_style( 'meetinglistlite-custom', $custom_css );
+
 		$tsml_ui_config = self::get_tsml_config();
 		wp_localize_script(
 			'meetinglistlite_tsml_ui',
@@ -328,6 +359,12 @@ class MEETINGLISTLITE {
 		$meetinglistlite_tsml_config = get_option( 'meetinglistlite_tsml_config', '' );
 		$meetinglistlite_custom_css = get_option( 'meetinglistlite_custom_css', '' );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+		if ( '' === $meetinglistlite_tsml_config ) {
+			$meetinglistlite_tsml_config = $default_config_json;
+		}
+		if ( '' === $meetinglistlite_custom_css ) {
+			$meetinglistlite_custom_css = self::get_default_css();
+		}
 		?>
 		<div class="wrap">
 			<h2>Meeting List Lite Settings</h2>
@@ -353,7 +390,7 @@ class MEETINGLISTLITE {
 					<tr style="vertical-align: top;">
 						<th scope="row">TSML UI Configuration</th>
 						<td>
-							<textarea name="meetinglistlite_tsml_config" id="meetinglistlite_tsml_config" rows="20" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_tsml_config ); ?></textarea><br />
+							<textarea name="meetinglistlite_tsml_config" id="meetinglistlite_tsml_config" rows="15" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_tsml_config ); ?></textarea><br />
 							<label for="meetinglistlite_tsml_config">Custom TSML UI configuration in JSON format. Leave empty to use defaults.</label><br />
 							<details>
 								<summary><strong>Show Default Configuration</strong></summary>
@@ -364,7 +401,7 @@ class MEETINGLISTLITE {
 					<tr style="vertical-align: top;">
 						<th scope="row">Custom CSS</th>
 						<td>
-							<textarea name="meetinglistlite_custom_css" id="meetinglistlite_custom_css" rows="10" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_custom_css ); ?></textarea><br />
+							<textarea name="meetinglistlite_custom_css" id="meetinglistlite_custom_css" rows="15" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_custom_css ); ?></textarea><br />
 							<label for="meetinglistlite_custom_css">Additional CSS to customize the appearance of the meeting list.</label> <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#customize-theme-colors" target="_blank" rel="noopener noreferrer">View TSML UI CSS Documentation</a><br />
 							<p><strong>Example:</strong></p>
 							<pre style="background: #f0f0f0; padding: 10px; margin-top: 5px; font-size: 11px;">/* Customize theme colors */
