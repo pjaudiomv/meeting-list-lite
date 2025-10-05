@@ -8,9 +8,28 @@ Practical examples of using Meeting List Lite in different scenarios.
 
 ## Basic Meeting Display
 
-### Using BMLT (Recommended)
+### Using Custom JSON
 
-The easiest way to get started is with a BMLT server:
+For non-BMLT data sources:
+
+**1. Configure Plugin Settings**
+- Go to **Settings** → **Meeting List Lite**
+- Set **Data Source URL**: `https://your-site.com/meetings.json`
+- Save settings
+
+**2. Create a Page**
+Create a new page called "Meetings" and add:
+```
+[tsml_ui]
+```
+
+**3. Result**
+Your meetings will display with search, filters, and maps (if coordinates are provided).
+
+
+### Using BMLT
+
+How to get started with a BMLT server:
 
 **1. Build your BMLT URL:**
 - Go to your BMLT server's semantic page: `https://your-bmlt-server.org/main_server/semantic`
@@ -31,24 +50,6 @@ The easiest way to get started is with a BMLT server:
 ```
 BMLT URL: https://latest.aws.bmlt.app/main_server/client_interface/tsml/?switcher=GetSearchResults&services=1006
 ```
-
-### Using Custom JSON
-
-For non-BMLT data sources:
-
-**1. Configure Plugin Settings**
-- Go to **Settings** → **Meeting List Lite**
-- Set **Data Source URL**: `https://your-site.com/meetings.json`
-- Save settings
-
-**2. Create a Page**
-Create a new page called "Meetings" and add:
-```
-[tsml_ui]
-```
-
-**3. Result**
-Your meetings will display with search, filters, and maps (if coordinates are provided).
 
 ## BMLT Examples
 
