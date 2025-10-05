@@ -25,7 +25,7 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Keep your meeting data in Google Sheets, JSON feeds, or any system that 
+        Keep your meeting data in Google Sheets, JSON feeds, BMLT or any system that
         follows the TSML specification. No database management required.
       </>
     ),
