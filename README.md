@@ -132,6 +132,10 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.0.8
+
+* Add google key setting.
+
 ### 1.0.7
 
 * Remove base css and just use as default custom css.

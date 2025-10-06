@@ -136,6 +136,7 @@ public static function setup_shortcode(string|array $attrs = []): string {
 
 Plugin settings are managed through WordPress options:
 - `meetinglistlite_data_src`: Data source URL
+- `meetinglistlite_google_key`: Google Maps API key
 - `meetinglistlite_tsml_config`: TSML UI configuration JSON
 - `meetinglistlite_custom_css`: Custom CSS styles
 
@@ -258,6 +259,7 @@ For development questions:
 All user inputs are sanitized:
 ```php
 $data_src = esc_url_raw($attrs['data_src']);
+$google_key = sanitize_text_field($attrs['google_key']);
 $timezone = sanitize_text_field($attrs['timezone']);
 ```
 

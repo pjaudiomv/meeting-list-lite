@@ -141,30 +141,43 @@ Display different meeting lists on different pages:
 
 ## Google Sheets Integration
 
-### Step 1: Create Your Google Sheet
-Create a sheet with these columns:
-- name
-- day (0=Sunday, 1=Monday, etc.)
-- time (HH:MM format)
-- location
-- address
-- latitude
-- longitude
-- types (comma-separated)
-- notes
+Two methods available:
 
-### Step 2: Publish the Sheet
-1. Go to **File** → **Share** → **Publish to web**
-2. Choose **Comma-separated values (.csv)**
-3. Copy the published URL
+### Method 1: Direct Connection (Real-time)
 
-### Step 3: Convert to JSON
-Use a service to convert CSV to JSON, or set up a converter script.
+**Best for:** Small sites, need real-time updates
 
-### Step 4: Use in Plugin
+**Setup:**
+1. Get a Google Sheets API key
+2. Use your sheet URL directly:
+
 ```
-[tsml_ui data_src="https://your-converted-json-url.com/meetings.json"]
+[tsml_ui data_src="https://docs.google.com/spreadsheets/d/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE/edit#gid=0" google_key="YOUR_GOOGLE_API_KEY"]
 ```
+
+**With global settings:**
+- **Settings** → **Meeting List Lite**
+- **Data Source URL**: `https://docs.google.com/spreadsheets/d/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE/edit#gid=0`
+- **Google API Key**: `YOUR_GOOGLE_API_KEY`
+- Then use: `[tsml_ui]`
+
+### Method 2: Sheet Importer (Recommended)
+
+**Best for:** Most users, better reliability
+
+**Setup:**
+1. Copy [San Jose's template sheet](https://docs.google.com/spreadsheets/d/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE/edit#gid=0)
+2. Fill in your data
+3. Make sheet public ("Anyone with the link" → "Viewer")
+4. Go to [Google Sheets Importer](https://sheets.code4recovery.org)
+5. Paste your sheet URL and click **Import**
+6. Use the generated JSON URL:
+
+```
+[tsml_ui data_src="https://sheets.code4recovery.org/storage/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE.json"]
+```
+
+**Remember:** Bookmark the importer result page to easily refresh your feed when you update the sheet.
 
 ## Timezone Examples
 

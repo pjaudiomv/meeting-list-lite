@@ -23,7 +23,7 @@ Service bodies who:
 
 - **BMLT Integration**: Works seamlessly with BMLT Root Server 4.0.0+ via built-in TSML output
 - **TSML UI Integration**: Displays meetings using the same TSML UI interface as 12 Step Meeting List
-- **Multiple Data Sources**: Supports BMLT servers, JSON feeds, and Google Sheets that follow the [TSML spec](https://github.com/code4recovery/spec)
+- **Multiple Data Sources**: Supports BMLT servers, JSON feeds, and Google Sheets (via simple `.json` URL conversion) that follow the [TSML spec](https://github.com/code4recovery/spec)
 - **No Database Required**: Your data source is the single source of truth
 - **Lightweight**: Easy to set up with minimal overhead
 - **Real-time Data**: When using BMLT, always shows current meeting information

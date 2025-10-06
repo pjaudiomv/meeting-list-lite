@@ -26,22 +26,19 @@ https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit#gid=0
 https://api.your-service.com/meetings
 ```
 
-### Google Maps API Key (Optional)
+### Google API Key (Optional)
 
-If you want to display maps for in-person meetings, you'll need a Google Maps API key.
+This field is only needed if you're connecting directly to Google Sheets (not using the Sheet Importer).
 
+**For Google Sheets direct connection:**
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
-3. Enable the following APIs:
-   - Maps JavaScript API
-   - Geocoding API (if needed)
+3. Enable the **Google Sheets API**
 4. Create credentials (API key)
 5. Restrict the API key to your domain for security
 6. Enter the API key in the plugin settings
 
-:::tip
-Maps will work without an API key for development, but you'll see a watermark and usage limitations.
-:::
+**Note:** Maps functionality is handled directly by the TSML UI component - no additional setup required in Meeting List Lite.
 
 ### Timezone Override
 
@@ -282,13 +279,86 @@ Each meeting in your JSON should include:
 
 ## Google Sheets Setup
 
-To use a Google Sheet as your data source:
+There are **two ways** to use Google Sheets with Meeting List Lite:
 
-1. Create a Google Sheet with the appropriate columns
-2. Go to **File** → **Share** → **Publish to web**
-3. Choose **Comma-separated values (.csv)** format
-4. Copy the published URL
-5. Use a service like [CSV to JSON converter](https://csvjson.com/csv2json) or set up automatic conversion
+### Option 1: Direct Google Sheets Connection (Recommended for Small Sites)
+
+Connect directly to your Google Sheet using a Google API key.
+
+**Advantages:**
+- Real-time data - changes appear immediately
+- No intermediate service required
+
+**Disadvantages:**
+- Requires Google API key setup
+- Google rate limits may cause 429 errors on high-traffic sites
+- Privacy-oriented content blockers may interfere
+- Potentially slower page loading
+
+**Setup:**
+
+1. **Prepare your Google Sheet:**
+   - Create sheet with TSML-compatible columns
+   - Set sharing to "Anyone with the link" → "Viewer"
+
+2. **Get Google Sheets API Key:**
+   - Follow [Google's API key instructions](https://developers.google.com/sheets/api/guides/authorizing#APIKey)
+   - Enable Google Sheets API for your project
+
+3. **Configure Meeting List Lite:**
+   - **Data Source URL**: Your full Google Sheet URL
+   - **Google API Key**: Your Google Sheets API key (used to access the sheet data)
+   
+   ```
+   https://docs.google.com/spreadsheets/d/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE/edit#gid=0
+   ```
+
+4. **Use with shortcode:**
+   ```
+   [tsml_ui data_src="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit#gid=0" google_key="YOUR_GOOGLE_API_KEY"]
+   ```
+
+### Option 2: Google Sheets Importer (Recommended for Most Users)
+
+Use the [Google Sheets Importer](https://sheets.code4recovery.org) to convert your sheet to JSON.
+
+**Advantages:**
+- No API key required
+- Better performance and reliability
+- Mitigates rate limiting issues
+- Works with privacy blockers
+
+**Disadvantages:**
+- Requires manual refresh when data changes
+- Uses intermediate service
+- Feeds removed if not refreshed within 30 days
+
+**Setup:**
+
+1. **Prepare your Google Sheet:**
+   - Create sheet with TSML-compatible columns
+   - Set sharing to "Anyone with the link" → "Viewer"
+
+2. **Convert to JSON:**
+   - Go to [Google Sheets Importer](https://sheets.code4recovery.org)
+   - Paste your Google Sheet URL
+   - Click **Import**
+   - Bookmark the result page for easy refreshing
+
+3. **Use the generated JSON URL:**
+   ```
+   [tsml_ui data_src="https://sheets.code4recovery.org/storage/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE.json"]
+   ```
+
+### Getting Started Template
+
+For either method:
+
+1. Open [San Jose's sample Google Sheet](https://docs.google.com/spreadsheets/d/12Ga8uwMG4WJ8pZ_SEU7vNETp_aQZ-2yNVsYDFqIwHyE/edit#gid=0)
+2. **File** → **Make a copy**
+3. Fill in your meeting data
+4. Set sharing to "Anyone with the link" → **Viewer**
+5. Choose your preferred method above
 
 ## Testing Your Configuration
 
