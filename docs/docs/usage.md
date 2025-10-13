@@ -208,6 +208,49 @@ Each meeting displays:
 - Notes and special instructions
 - Conference URLs for online meetings
 
+## Pretty URLs
+
+Meeting List Lite supports both hash-based routing and pretty URLs for individual meeting links.
+
+### Hash Routing (Default)
+
+By default, individual meeting links use hash-based routing:
+
+```
+https://yoursite.com/meetings/#/some-meeting
+https://yoursite.com/meetings/#/another-meeting
+```
+
+**Advantages:**
+- Simple setup, no configuration needed
+- No server-side routing required
+
+### Pretty URLs
+
+With the Base Path setting configured, you get clean, SEO-friendly URLs:
+
+```
+https://yoursite.com/meetings/some-meeting
+https://yoursite.com/meetings/another-meeting
+```
+
+**Setup:**
+1. Go to **Settings** → **Meeting List Lite**
+2. Enter your page slug in **Base Path for Pretty URLs** (e.g., `meetings`)
+3. Save settings
+4. Go to **Settings** → **Permalinks** and click **Save Changes**
+
+**Advantages:**
+- Better for SEO
+- Cleaner, more professional URLs
+- Easier to share specific meeting links
+- Better user experience
+
+**Example Usage:**
+```
+[tsml_ui]  <!-- Uses pretty URLs if base path is configured -->
+```
+
 ## Multiple Meeting Lists
 
 You can display multiple meeting lists on the same site by using different data sources:

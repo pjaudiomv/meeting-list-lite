@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/meeting-list-lite/
 Tags: meeting list, recovery, addiction
 Requires PHP: 8.0
 Tested up to: 6.8
-Stable tag: 1.0.8
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,14 @@ This plugin relies on external services to function properly:
 - No data is sent to your data source; the plugin only reads from it
 
 == Changelog ==
+
+= 1.1.0 =
+
+* Added configurable base path setting for pretty URLs (e.g., `/meetings/slug-name`)
+* Added automatic rewrite rule management with version tracking
+* Added plugin activation and deactivation hooks for proper permalink handling
+* Improved settings page with new "Base Path for Pretty URLs" option
+* Enhanced URL routing to support client-side navigation with React Router
 
 = 1.0.8 =
 

@@ -139,6 +139,70 @@ Plugin settings are managed through WordPress options:
 - `meetinglistlite_google_key`: Google Maps API key
 - `meetinglistlite_tsml_config`: TSML UI configuration JSON
 - `meetinglistlite_custom_css`: Custom CSS styles
+- `meetinglistlite_base_path`: Meeting list base path for pretty URLs
+
+### Pretty URLs Implementation
+
+The plugin implements pretty URLs through WordPress rewrite rules when the `meetinglistlite_base_path` setting is configured.
+
+#### Rewrite Rules Registration
+
+```php
+private function register_rewrite_rules(string $base_path): void {
+    if (empty($base_path)) {
+        return;
+    }
+    
+    // Remove leading/trailing slashes
+    $base_path = trim($base_path, '/');
+    
+    add_rewrite_rule(
+        '^' . preg_quote($base_path, '/') . '(/.*)?$',
+        'index.php?pagename=' . $base_path,
+        'top'
+    );
+}
+```
+
+#### How It Works
+
+1. **Plugin Activation**: Rewrite rules are registered and permalinks flushed
+2. **URL Routing**: WordPress matches URLs like `/meetings/some-meeting` to the base page
+3. **Frontend Processing**: The TSML UI component handles client-side routing
+4. **Data Attribute**: Base path is passed to the component via `data-path` attribute
+
+#### Version Management
+
+The plugin uses a rewrite version system to ensure rules are updated:
+
+```php
+const REWRITE_VERSION = '1.0';
+
+// Check if rewrite rules need updating
+if (get_option('meetinglistlite_rewrite_version') !== self::REWRITE_VERSION) {
+    flush_rewrite_rules();
+    update_option('meetinglistlite_rewrite_version', self::REWRITE_VERSION);
+}
+```
+
+#### Shortcode Integration
+
+The base path is automatically passed to the TSML UI component:
+
+```php
+$base_path_attr = !empty($base_path) 
+    ? ' data-path="/' . esc_attr(trim($base_path, '/')) . '"' 
+    : '';
+
+$content = '<div id="tsml-ui" data-src="' . esc_url($data_src) . '"' 
+         . $timezone_attr . $google_key_attr . $base_path_attr . '></div>';
+```
+
+#### Permalink Flush Requirements
+
+- **Manual flush required** after changing base path setting
+- **Automatic flush** on plugin activation/deactivation
+- **Version-based flush** when rewrite rules are updated in plugin updates
 
 ## Contributing
 
