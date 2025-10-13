@@ -26,7 +26,7 @@ class MEETINGLISTLITE {
 
 	private const MEETINGLISTLITE_VERSION = '1.0.0';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
-	private const TSML_CDN_URL = 'https://cdn.aws.bmlt.app/test/app.js';
+	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
 	private const REWRITE_VERSION = '1.0';
 
 	private $plugin_dir;
@@ -85,10 +85,7 @@ class MEETINGLISTLITE {
 		if ( empty( $base_path ) ) {
 			return;
 		}
-
-		// Remove leading/trailing slashes
 		$base_path = trim( $base_path, '/' );
-
 		add_rewrite_rule(
 			'^' . preg_quote( $base_path, '/' ) . '(/.*)?$',
 			'index.php?pagename=' . $base_path,

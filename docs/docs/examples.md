@@ -26,6 +26,11 @@ Create a new page called "Meetings" and add:
 **3. Result**
 Your meetings will display with search, filters, and maps (if coordinates are provided).
 
+**4. Optional: Enable Pretty URLs**
+For cleaner URLs like `yoursite.com/meetings/some-meeting`:
+- In plugin settings, set **Base Path**: `meetings`
+- Go to **Settings** → **Permalinks** and click **Save Changes**
+
 
 ### Using BMLT
 
@@ -178,6 +183,48 @@ Two methods available:
 ```
 
 **Remember:** Bookmark the importer result page to easily refresh your feed when you update the sheet.
+
+## URL Routing Examples
+
+### Hash Routing (Default)
+
+Standard implementation with hash-based URLs:
+
+**Setup:**
+```
+[tsml_ui]
+```
+
+**URL Examples:**
+- Main page: `https://yoursite.com/meetings/`
+- Meeting detail: `https://yoursite.com/meetings/#/some-meeting`
+- Search results: `https://yoursite.com/meetings/#/?search=meditation`
+
+### Pretty URLs
+
+Clean, SEO-friendly URLs:
+
+**Setup:**
+1. **Settings** → **Meeting List Lite** → **Base Path**: `meetings`
+2. **Settings** → **Permalinks** → **Save Changes**
+3. Add shortcode: `[tsml_ui]`
+
+**URL Examples:**
+- Main page: `https://yoursite.com/meetings/`
+- Meeting detail: `https://yoursite.com/meetings/some-meeting`
+- Search results: `https://yoursite.com/meetings/?search=meditation`
+
+### Multiple Meeting Pages with Pretty URLs
+
+**Page 1: "Meetings" (slug: `meetings`)**
+- Base Path: `meetings`
+- URLs: `yoursite.com/meetings/meeting-name`
+
+**Page 2: "Online Meetings" (slug: `online-meetings`)**
+- Base Path: `online-meetings`  
+- URLs: `yoursite.com/online-meetings/meeting-name`
+
+**Important:** Each page with pretty URLs needs its own Base Path setting. You can only have one active Base Path at a time, so this approach works best when you have one primary meeting directory.
 
 ## Timezone Examples
 

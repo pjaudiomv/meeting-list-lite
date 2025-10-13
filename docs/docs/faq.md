@@ -185,6 +185,37 @@ This is usually because:
 3. Try disabling other plugins to check for conflicts
 4. Switch to a default theme temporarily to test
 
+### Pretty URLs not working
+
+If pretty URLs like `/meetings/some-meeting` show 404 errors:
+
+1. **Check WordPress permalinks**:
+   - Go to **Settings** → **Permalinks**
+   - Ensure "Pretty permalinks" is enabled (not "Plain")
+   - Click **Save Changes** to flush rewrite rules
+
+2. **Verify base path setting**:
+   - Go to **Settings** → **Meeting List Lite**
+   - Ensure the Base Path matches your page slug exactly
+   - If your meetings page is `/meetings/`, enter `meetings`
+
+3. **Flush permalinks manually**:
+   - After changing the Base Path setting, always flush permalinks
+   - **Settings** → **Permalinks** → **Save Changes**
+
+4. **Check .htaccess permissions**:
+   - Ensure WordPress can write to your `.htaccess` file
+   - File permissions should be 644 or 664
+   - File should be owned by your web server user
+
+5. **Server configuration**:
+   - Some hosting providers disable URL rewriting
+   - Contact your host if permalinks work elsewhere but not for pretty URLs
+   - Consider using hash routing instead if server limitations exist
+
+**Fallback to hash routing**:
+If pretty URLs won't work in your environment, leave the Base Path setting empty to use standard hash routing (`/meetings/#/some-meeting`).
+
 ## Support
 
 ### Where can I get help?

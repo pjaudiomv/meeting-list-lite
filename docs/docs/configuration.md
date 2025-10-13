@@ -50,6 +50,60 @@ Use IANA timezone identifiers like:
 - `Asia/Tokyo`
 - `Australia/Sydney`
 
+### Pretty URLs (Base Path)
+
+Enable pretty URLs for your meeting list to improve SEO and user experience.
+
+**What are Pretty URLs?**
+
+Instead of hash-based routing like:
+```
+https://yoursite.com/meetings/#/some-meeting
+```
+
+You get clean, search-engine friendly URLs like:
+```
+https://yoursite.com/meetings/some-meeting
+```
+
+**Setup Instructions:**
+
+1. **Enter the page slug** where you've added the `[tsml_ui]` shortcode
+   - If your meetings page is `/meetings/`, enter `meetings`
+   - If your meetings page is `/find-meetings/`, enter `find-meetings`
+
+2. **Save the settings**
+
+3. **Flush permalinks** (IMPORTANT):
+   - Go to **Settings** → **Permalinks** in your WordPress admin
+   - Click **Save Changes** (even without making changes)
+   - This updates WordPress rewrite rules
+
+**Example Configuration:**
+- **Page slug**: `meetings`
+- **Base Path setting**: `meetings`
+- **Hash URL**: `yoursite.com/meetings/#/some-meeting`
+- **Pretty URL**: `yoursite.com/meetings/some-meeting`
+
+**When to Use Pretty URLs:**
+
+✅ **Use Pretty URLs when:**
+- SEO is important for your meeting directory
+- Users frequently share specific meeting links
+- You want cleaner, more professional URLs
+- Your theme supports WordPress routing well
+
+❌ **Avoid Pretty URLs when:**
+- Using a caching plugin that doesn't handle dynamic routes
+- Your hosting has strict .htaccess limitations
+- You prefer simpler setup without permalink management
+
+**Important Notes:**
+- Only works with WordPress "Pretty Permalinks" enabled
+- Requires updating permalinks after configuration changes
+- If Pretty URLs stop working, try flushing permalinks again
+- Leave empty to disable and use standard hash routing
+
 ## Advanced Configuration
 
 ### TSML UI Configuration
