@@ -132,6 +132,10 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.1.1
+
+* Improved default meeting type labels when using BMLT data sources
+
 ### 1.1.0
 
 * Added configurable base path setting for pretty URLs (e.g., `/meetings/slug-name`)

@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class MEETINGLISTLITE {
 
-	private const MEETINGLISTLITE_VERSION = '1.0.0';
+	private const MEETINGLISTLITE_VERSION = '1.1.1';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
 	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
 	private const REWRITE_VERSION = '1.0';
@@ -208,6 +208,33 @@ class MEETINGLISTLITE {
 	 * @return array Default configuration array.
 	 */
 	private static function get_default_tsml_config(): array {
+		// Check if data source contains 'client_interface' (BMLT server indicator)
+		$data_src = get_option( 'meetinglistlite_data_src', '' );
+		if ( str_contains( $data_src, 'client_interface' ) ) {
+			// Return NA-specific configuration for BMLT servers
+			return [
+				'strings' => [
+					'en' => [
+						'types' => [
+							'BT' => 'Basic Text',
+							'CPT' => '12 Concepts',
+							'JFT' => 'Just For Today',
+							'IP' => 'IP Study',
+							'IW' => 'It Works How and Why',
+							'LC' => 'Living Clean',
+							'SPAD' => 'Spiritual Principle a Day',
+							'SWG' => 'Step Working Guide Study',
+						],
+						'type_descriptions' => [
+							'O' => 'This meeting is open to addicts and non-addicts alike.',
+							'C' => 'This meeting is closed to non-addicts.',
+						],
+					],
+				],
+			];
+		}
+
+		// Default configuration for non-BMLT sources, program agnostic
 		return [
 			'strings' => [
 				'en' => [
