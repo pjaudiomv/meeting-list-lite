@@ -139,6 +139,7 @@ Plugin settings are managed through WordPress options:
 - `meetinglistlite_google_key`: Google Maps API key
 - `meetinglistlite_tsml_config`: TSML UI configuration JSON
 - `meetinglistlite_custom_css`: Custom CSS styles
+- `meetinglistlite_base_path`: Meeting list base path
 
 ## Contributing
 

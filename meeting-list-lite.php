@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.0.8
+ * Version:           1.1.0
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -26,7 +26,8 @@ class MEETINGLISTLITE {
 
 	private const MEETINGLISTLITE_VERSION = '1.0.0';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
-	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
+	private const TSML_CDN_URL = 'https://cdn.aws.bmlt.app/test/app.js';
+	private const REWRITE_VERSION = '1.0';
 
 	private $plugin_dir;
 	/**
@@ -43,6 +44,56 @@ class MEETINGLISTLITE {
 		$this->plugin_dir = plugin_dir_url( __FILE__ );
 		// Register the 'plugin_setup' method to be executed during the 'init' action hook
 		add_action( 'init', [ $this, 'plugin_setup' ] );
+		register_activation_hook( __FILE__, [ $this, 'activate' ] );
+		register_deactivation_hook( __FILE__, [ $this, 'deactivate' ] );
+	}
+
+	/**
+	 * Plugin activation callback.
+	 * Registers rewrite rules and flushes permalinks.
+	 *
+	 * @return void
+	 */
+	public function activate(): void {
+		$base_path = get_option( 'meetinglistlite_base_path', '' );
+		if ( ! empty( $base_path ) ) {
+			$this->register_rewrite_rules( $base_path );
+			flush_rewrite_rules();
+		}
+		update_option( 'meetinglistlite_rewrite_version', self::REWRITE_VERSION );
+	}
+
+	/**
+	 * Plugin deactivation callback.
+	 * Flushes rewrite rules to clean up.
+	 *
+	 * @return void
+	 */
+	public function deactivate(): void {
+		flush_rewrite_rules();
+		delete_option( 'meetinglistlite_rewrite_version' );
+	}
+
+
+	/**
+	 * Register custom rewrite rules.
+	 *
+	 * @param string $base_path The base path for the rewrite rule (e.g., 'meetings').
+	 * * @return void
+	 */
+	private function register_rewrite_rules( string $base_path ): void {
+		if ( empty( $base_path ) ) {
+			return;
+		}
+
+		// Remove leading/trailing slashes
+		$base_path = trim( $base_path, '/' );
+
+		add_rewrite_rule(
+			'^' . preg_quote( $base_path, '/' ) . '(/.*)?$',
+			'index.php?pagename=' . $base_path,
+			'top'
+		);
 	}
 
 	/**
@@ -55,6 +106,17 @@ class MEETINGLISTLITE {
 	 * @return void
 	 */
 	public function plugin_setup(): void {
+		$base_path = get_option( 'meetinglistlite_base_path', '' );
+
+		if ( ! empty( $base_path ) ) {
+			$this->register_rewrite_rules( $base_path );
+
+			if ( get_option( 'meetinglistlite_rewrite_version' ) !== self::REWRITE_VERSION ) {
+				flush_rewrite_rules();
+				update_option( 'meetinglistlite_rewrite_version', self::REWRITE_VERSION );
+			}
+		}
+
 		if ( is_admin() ) {
 			// If in the admin dashboard, register admin menu and settings actions
 			add_action( 'admin_menu', [ static::class, 'create_menu' ] );
@@ -99,6 +161,8 @@ class MEETINGLISTLITE {
 		);
 		$option_data_src   = esc_url_raw( get_option( 'meetinglistlite_data_src' ) );
 		$option_google_key = sanitize_text_field( get_option( 'meetinglistlite_google_key' ) );
+		$base_path = get_option( 'meetinglistlite_base_path', '' );
+
 		$data_src = $attrs['data_src']
 			? esc_url_raw( $attrs['data_src'] )
 			: ( ! empty( $option_data_src ) ? $option_data_src : '' );
@@ -110,8 +174,10 @@ class MEETINGLISTLITE {
 			: sanitize_text_field( get_option( 'timezone_string' ) );
 		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
 		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
+		$base_path_attr = ! empty( $base_path ) ? ' data-path="/' . esc_attr( trim( $base_path, '/' ) ) . '"' : '';
+
 		$content = '<div class="meetinglistlite-fullwidth">';
-		$content .= '<div id="tsml-ui" data-src="' . esc_url( $data_src ) . '"' . $timezone_attr . $google_key_attr . '></div>';
+		$content .= '<div id="tsml-ui" data-src="' . esc_url( $data_src ) . '"' . $timezone_attr . $google_key_attr . $base_path_attr . '></div>';
 		$content .= '</div>';
 		return $content;
 	}
@@ -242,6 +308,25 @@ class MEETINGLISTLITE {
 	}
 
 	/**
+	 * Sanitize base path input.
+	 *
+	 * @param string $input Raw base path input.
+	 * @return string Sanitized base path.
+	 */
+	public static function sanitize_base_path( string $input ): string {
+		$old_value = get_option( 'meetinglistlite_base_path', '' );
+		$new_value = sanitize_text_field( trim( $input, '/' ) );
+
+		// If the value changed, flush rewrite rules
+		if ( $old_value !== $new_value ) {
+			// Schedule a rewrite flush for the next page load
+			update_option( 'meetinglistlite_rewrite_version', '' );
+		}
+
+		return $new_value;
+	}
+
+	/**
 	 * Enqueue plugin styles and scripts.
 	 *
 	 * This method is responsible for enqueueing the necessary CSS and JavaScript
@@ -303,6 +388,15 @@ class MEETINGLISTLITE {
 			[
 				'type' => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
+			]
+		);
+		register_setting(
+			self::SETTINGS_GROUP,
+			'meetinglistlite_base_path',
+			[
+				'type' => 'string',
+				'sanitize_callback' => [ static::class, 'sanitize_base_path' ],
+				'default' => '',
 			]
 		);
 		register_setting(
@@ -371,6 +465,7 @@ class MEETINGLISTLITE {
 	public static function draw_settings(): void {
 		$meetinglistlite_data_src = get_option( 'meetinglistlite_data_src' );
 		$meetinglistlite_google_key = get_option( 'meetinglistlite_google_key' );
+		$meetinglistlite_base_path = get_option( 'meetinglistlite_base_path', '' );
 		$meetinglistlite_tsml_config = get_option( 'meetinglistlite_tsml_config', '' );
 		$meetinglistlite_custom_css = get_option( 'meetinglistlite_custom_css', '' );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
@@ -399,6 +494,17 @@ class MEETINGLISTLITE {
 						<td>
 							<input type="text" name="meetinglistlite_google_key" id="meetinglistlite_google_key" size="60" value="<?php echo esc_attr( $meetinglistlite_google_key ); ?>" /><br />
 							<label for="meetinglistlite_google_key">Only needed if using Google Sheets</label>
+						</td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<th scope="row">Base Path for Pretty URLs</th>
+						<td>
+							<input type="text" name="meetinglistlite_base_path" id="meetinglistlite_base_path" size="40" value="<?php echo esc_attr( $meetinglistlite_base_path ); ?>" placeholder="meetings" /><br />
+							<label for="meetinglistlite_base_path">
+								Optional. Enable pretty URLs like <code>/meetings/slug-name</code> instead of hash routing <code>/meetings/#/slug-name</code>.<br />
+								Enter the page slug (e.g., "meetings") where you've added the [tsml_ui] shortcode. Leave empty to disable.<br />
+								<strong>Note:</strong> After changing this setting, go to <a href="<?php echo esc_url( admin_url( 'options-permalink.php' ) ); ?>">Settings → Permalinks</a> and click "Save Changes" to update rewrite rules.
+							</label>
 						</td>
 					</tr>
 				</table>

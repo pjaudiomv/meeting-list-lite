@@ -132,6 +132,14 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.1.0
+
+* Added configurable base path setting for pretty URLs (e.g., `/meetings/slug-name`)
+* Added automatic rewrite rule management with version tracking
+* Added plugin activation and deactivation hooks for proper permalink handling
+* Improved settings page with new "Base Path for Pretty URLs" option
+* Enhanced URL routing to support client-side navigation with React Router
+
 ### 1.0.8
 
 * Add google key setting.
