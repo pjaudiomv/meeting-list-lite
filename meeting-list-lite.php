@@ -523,7 +523,7 @@ class MEETINGLISTLITE {
 					<tr style="vertical-align: top;">
 						<th scope="row">Base Path for Pretty URLs</th>
 						<td>
-							<input type="text" name="meetinglistlite_base_path" id="meetinglistlite_base_path" size="40" value="<?php echo esc_attr( $meetinglistlite_base_path ); ?>" placeholder="meetings" /><br />
+							<input type="text" name="meetinglistlite_base_path" id="meetinglistlite_base_path" size="40" value="<?php echo esc_attr( $meetinglistlite_base_path ); ?>" placeholder="" /><br />
 							<label for="meetinglistlite_base_path">
 								Optional. Enable pretty URLs like <code>/meetings/slug-name</code> instead of hash routing <code>/meetings/#/slug-name</code>.<br />
 								Enter the page slug (e.g., "meetings") where you've added the [tsml_ui] shortcode. Leave empty to disable.<br />
