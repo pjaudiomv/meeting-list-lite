@@ -132,6 +132,10 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.2.0
+
+* Added CSS template selection dropdown with "Full Width" and "Full Width (Force)" options
+
 ### 1.1.1
 
 * Improved default meeting type labels when using BMLT data sources
