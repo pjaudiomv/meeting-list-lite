@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.1.1
+ * Version:           1.2.0
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -24,10 +24,15 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class MEETINGLISTLITE {
 
-	private const MEETINGLISTLITE_VERSION = '1.1.1';
+	private const MEETINGLISTLITE_VERSION = '1.2.0';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
 	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
 	private const REWRITE_VERSION = '1.0';
+
+	// CSS Template constants
+	private const CSS_TEMPLATE_FULL_WIDTH = 'full_width';
+	private const CSS_TEMPLATE_FULL_WIDTH_FORCE = 'full_width_force';
+	private const CSS_TEMPLATE_CUSTOM = 'custom';
 
 	private $plugin_dir;
 	/**
@@ -180,11 +185,23 @@ class MEETINGLISTLITE {
 	}
 
 	/**
-	 * Get default base CSS.
+	 * Get CSS for Full Width template.
 	 *
-	 * @return string Default CSS styles.
+	 * @return string CSS styles for Full Width template.
 	 */
-	private static function get_default_css(): string {
+	private static function get_css_full_width(): string {
+		return '#tsml-ui {
+	width: 100% !important;
+	min-height: 600px !important;
+}';
+	}
+
+	/**
+	 * Get CSS for Full Width (Force) template.
+	 *
+	 * @return string CSS styles for Full Width (Force) template.
+	 */
+	private static function get_css_full_width_force(): string {
 		return '.meetinglistlite-fullwidth {
 	width: 100vw !important;
 	position: relative !important;
@@ -199,6 +216,33 @@ class MEETINGLISTLITE {
 	width: 100% !important;
 	min-height: 600px !important;
 }';
+	}
+
+	/**
+	 * Get CSS based on template selection.
+	 *
+	 * @param string $template Template identifier.
+	 * @return string CSS styles for the template.
+	 */
+	private static function get_css_by_template( string $template ): string {
+		switch ( $template ) {
+			case self::CSS_TEMPLATE_FULL_WIDTH:
+				return self::get_css_full_width();
+			case self::CSS_TEMPLATE_FULL_WIDTH_FORCE:
+				return self::get_css_full_width_force();
+			default:
+				return self::get_css_full_width(); // Default to Full Width
+		}
+	}
+
+	/**
+	 * Get default base CSS (for backward compatibility).
+	 *
+	 * @return string Default CSS styles.
+	 */
+	private static function get_default_css(): string {
+		// Default to Full Width template
+		return self::get_css_full_width();
 	}
 
 
@@ -328,7 +372,38 @@ class MEETINGLISTLITE {
 		// Remove @import to prevent loading external stylesheets
 		$css = preg_replace( '/@import/i', '', $css );
 
+		// If CSS was modified and doesn't match any template, switch to Custom
+		$current_template = get_option( 'meetinglistlite_css_template', self::CSS_TEMPLATE_FULL_WIDTH );
+		if ( self::CSS_TEMPLATE_CUSTOM !== $current_template ) {
+			// Normalize whitespace for comparison
+			$normalized_input = preg_replace( '/\s+/', ' ', trim( $css ) );
+			$normalized_template = preg_replace( '/\s+/', ' ', trim( self::get_css_by_template( $current_template ) ) );
+
+			if ( $normalized_input !== $normalized_template ) {
+				update_option( 'meetinglistlite_css_template', self::CSS_TEMPLATE_CUSTOM );
+			}
+		}
+
 		return $css;
+	}
+
+	/**
+	 * Sanitize CSS template selection.
+	 *
+	 * @param string $input Raw template selection input.
+	 * @return string Sanitized template selection.
+	 */
+	public static function sanitize_css_template( string $input ): string {
+		$old_value = get_option( 'meetinglistlite_css_template', self::CSS_TEMPLATE_FULL_WIDTH );
+		$new_value = sanitize_text_field( $input );
+
+		// If the template changed and it's not Custom, update the custom CSS field
+		if ( $old_value !== $new_value && self::CSS_TEMPLATE_CUSTOM !== $new_value ) {
+			$new_css = self::get_css_by_template( $new_value );
+			update_option( 'meetinglistlite_custom_css', $new_css );
+		}
+
+		return $new_value;
 	}
 
 	/**
@@ -439,6 +514,15 @@ class MEETINGLISTLITE {
 				'sanitize_callback' => [ static::class, 'sanitize_custom_css' ],
 			]
 		);
+		register_setting(
+			self::SETTINGS_GROUP,
+			'meetinglistlite_css_template',
+			[
+				'type' => 'string',
+				'sanitize_callback' => [ static::class, 'sanitize_css_template' ],
+				'default' => self::CSS_TEMPLATE_FULL_WIDTH,
+			]
+		);
 	}
 
 	/**
@@ -492,12 +576,14 @@ class MEETINGLISTLITE {
 		$meetinglistlite_base_path = get_option( 'meetinglistlite_base_path', '' );
 		$meetinglistlite_tsml_config = get_option( 'meetinglistlite_tsml_config', '' );
 		$meetinglistlite_custom_css = get_option( 'meetinglistlite_custom_css', '' );
+		$meetinglistlite_css_template = get_option( 'meetinglistlite_css_template', self::CSS_TEMPLATE_FULL_WIDTH );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		if ( '' === $meetinglistlite_tsml_config ) {
 			$meetinglistlite_tsml_config = $default_config_json;
 		}
 		if ( '' === $meetinglistlite_custom_css ) {
-			$meetinglistlite_custom_css = self::get_default_css();
+			// Use the selected template CSS
+			$meetinglistlite_custom_css = self::get_css_by_template( $meetinglistlite_css_template );
 		}
 		?>
 		<div class="wrap">
@@ -551,10 +637,21 @@ class MEETINGLISTLITE {
 						</td>
 					</tr>
 					<tr style="vertical-align: top;">
+						<th scope="row">CSS Template</th>
+						<td>
+							<select name="meetinglistlite_css_template" id="meetinglistlite_css_template" style="width: 250px;">
+								<option value="<?php echo esc_attr( self::CSS_TEMPLATE_FULL_WIDTH ); ?>" <?php selected( $meetinglistlite_css_template, self::CSS_TEMPLATE_FULL_WIDTH ); ?>>Full Width</option>
+								<option value="<?php echo esc_attr( self::CSS_TEMPLATE_FULL_WIDTH_FORCE ); ?>" <?php selected( $meetinglistlite_css_template, self::CSS_TEMPLATE_FULL_WIDTH_FORCE ); ?>>Full Width (Force)</option>
+								<option value="<?php echo esc_attr( self::CSS_TEMPLATE_CUSTOM ); ?>" <?php selected( $meetinglistlite_css_template, self::CSS_TEMPLATE_CUSTOM ); ?>>Custom</option>
+							</select><br />
+							<label for="meetinglistlite_css_template">Select a CSS template. Choose "Custom" to write your own CSS, or select a template to start with predefined styles.</label>
+						</td>
+					</tr>
+					<tr style="vertical-align: top;">
 						<th scope="row">Custom CSS</th>
 						<td>
 							<textarea name="meetinglistlite_custom_css" id="meetinglistlite_custom_css" rows="15" cols="80" style="font-family: monospace; font-size: 12px;"><?php echo esc_textarea( $meetinglistlite_custom_css ); ?></textarea><br />
-							<label for="meetinglistlite_custom_css">Additional CSS to customize the appearance of the meeting list.</label> <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#customize-theme-colors" target="_blank" rel="noopener noreferrer">View TSML UI CSS Documentation</a><br />
+							<label for="meetinglistlite_custom_css">CSS from the selected template above. You can edit this to further customize the appearance.</label> <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#customize-theme-colors" target="_blank" rel="noopener noreferrer">View TSML UI CSS Documentation</a><br />
 							<p><strong>Example:</strong></p>
 							<pre style="background: #f0f0f0; padding: 10px; margin-top: 5px; font-size: 11px;">/* Customize theme colors */
 #tsml-ui {
@@ -578,6 +675,39 @@ class MEETINGLISTLITE {
 				<?php submit_button(); ?>
 			</form>
 		</div>
+
+		<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			// Store original CSS values for each template
+			const templates = {
+				'<?php echo esc_js( self::CSS_TEMPLATE_FULL_WIDTH ); ?>': <?php echo wp_json_encode( self::get_css_full_width() ); ?>,
+				'<?php echo esc_js( self::CSS_TEMPLATE_FULL_WIDTH_FORCE ); ?>': <?php echo wp_json_encode( self::get_css_full_width_force() ); ?>
+			};
+
+			// Track if user has manually edited the CSS
+			let userModifiedCSS = false;
+			let lastTemplateValue = $('#meetinglistlite_css_template').val();
+
+			// Watch for manual CSS edits
+			$('#meetinglistlite_custom_css').on('input', function() {
+				if (lastTemplateValue !== '<?php echo esc_js( self::CSS_TEMPLATE_CUSTOM ); ?>') {
+					userModifiedCSS = true;
+				}
+			});
+
+			// Update CSS textarea when template changes
+			$('#meetinglistlite_css_template').on('change', function() {
+				const selectedTemplate = $(this).val();
+				lastTemplateValue = selectedTemplate;
+				
+				// Only update CSS if not Custom template
+				if (selectedTemplate !== '<?php echo esc_js( self::CSS_TEMPLATE_CUSTOM ); ?>' && templates[selectedTemplate]) {
+					$('#meetinglistlite_custom_css').val(templates[selectedTemplate]);
+					userModifiedCSS = false;
+				}
+			});
+		});
+		</script>
 		<?php
 	}
 

@@ -124,26 +124,81 @@ The plugin allows you to customize the TSML UI component with a JSON configurati
 }
 ```
 
+### CSS Templates
+
+Choose from predefined CSS templates to control how the meeting list displays on your page.
+
+**Available Templates:**
+
+1. **Full Width** (Default)
+   - Makes the meeting list fill 100% of its container width
+   - Maintains standard WordPress layout behavior
+   - Best for most sites and themes
+   
+   ```css
+   #tsml-ui {
+     width: 100% !important;
+     min-height: 600px !important;
+   }
+   ```
+
+2. **Full Width (Force)**
+   - Forces the meeting list to span the full browser viewport width
+   - Breaks out of theme containers and sidebars
+   - Useful for narrow content areas or sites with sidebars
+   
+   ```css
+   .meetinglistlite-fullwidth {
+     width: 100vw !important;
+     position: relative !important;
+     left: 50% !important;
+     margin-left: -50vw !important;
+     padding: 20px !important;
+     box-sizing: border-box !important;
+     max-width: none !important;
+   }
+
+   #tsml-ui {
+     width: 100% !important;
+     min-height: 600px !important;
+   }
+   ```
+
+**How to Use:**
+1. Go to **Settings** → **Meeting List Lite**
+2. Under "Advanced Settings", find the **CSS Template** dropdown
+3. Select your preferred template
+4. Click **Save Changes**
+5. The template's CSS will appear in the **Custom CSS** field below
+6. You can further customize the CSS if needed
+
 ### Custom CSS
 
-Add custom CSS to style the meeting list interface. This CSS will be applied only to pages containing the `[tsml_ui]` shortcode.
+After selecting a CSS template, you can further customize the appearance by editing the CSS in the **Custom CSS** field. This CSS will be applied only to pages containing the `[tsml_ui]` shortcode.
 
-**Example CSS:**
+**Additional CSS Examples:**
 ```css
+/* Customize theme colors */
+#tsml-ui {
+  --background: #fff;
+  --text: #212529;
+  --link: #0d6efd;
+}
+
+/* Add custom spacing */
 .meetinglistlite-fullwidth {
   margin: 20px 0;
 }
 
-#tsml-ui {
-  font-family: Arial, sans-serif;
-}
-
+/* Style meeting cards */
 .tsml-meeting {
   border: 1px solid #ddd;
   margin-bottom: 10px;
   padding: 10px;
 }
 ```
+
+For more CSS customization options, see the [TSML UI CSS Documentation](https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#customize-theme-colors).
 
 ## BMLT Integration
 

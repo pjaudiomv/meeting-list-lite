@@ -8,6 +8,16 @@ All notable changes to Meeting List Lite are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-11-04
+### Added
+- CSS template selection dropdown with "Full Width" and "Full Width (Force)" options
+- CSS templates automatically populate the Custom CSS field for easy customization
+- Improved CSS organization with separate template methods
+
+### Enhanced
+- Simplified styling customization with predefined CSS templates
+- Better user experience with template-based CSS management
+
 ## [1.1.1] - 2025-10-13
 ### Added
 - Automatic NA-specific TSML configuration for BMLT servers
