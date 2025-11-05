@@ -132,6 +132,9 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.2.1
+* Set default marker when using a BMLT server.
+
 ### 1.2.0
 
 * Added CSS template selection dropdown with "Full Width" and "Full Width (Force)" options
