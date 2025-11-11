@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.2.1
+ * Version:           1.2.2
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class MEETINGLISTLITE {
 
-	private const MEETINGLISTLITE_VERSION = '1.2.0';
+	private const MEETINGLISTLITE_VERSION = '1.2.2';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
 	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
 	private const REWRITE_VERSION = '1.0';
@@ -443,9 +443,10 @@ class MEETINGLISTLITE {
 	 * @return void
 	 */
 	public function assets(): void {
+		$tsml_cdn_url = get_option( 'meetinglistlite_tsml_cdn_url', self::TSML_CDN_URL );
 		wp_enqueue_script(
 			'meetinglistlite_tsml_ui',
-			self::TSML_CDN_URL,
+			$tsml_cdn_url,
 			[],
 			self::MEETINGLISTLITE_VERSION,
 			[
@@ -532,6 +533,15 @@ class MEETINGLISTLITE {
 				'default' => self::CSS_TEMPLATE_FULL_WIDTH,
 			]
 		);
+		register_setting(
+			self::SETTINGS_GROUP,
+			'meetinglistlite_tsml_cdn_url',
+			[
+				'type' => 'string',
+				'sanitize_callback' => 'esc_url_raw',
+				'default' => self::TSML_CDN_URL,
+			]
+		);
 	}
 
 	/**
@@ -586,6 +596,7 @@ class MEETINGLISTLITE {
 		$meetinglistlite_tsml_config = get_option( 'meetinglistlite_tsml_config', '' );
 		$meetinglistlite_custom_css = get_option( 'meetinglistlite_custom_css', '' );
 		$meetinglistlite_css_template = get_option( 'meetinglistlite_css_template', self::CSS_TEMPLATE_FULL_WIDTH );
+		$meetinglistlite_tsml_cdn_url = get_option( 'meetinglistlite_tsml_cdn_url', self::TSML_CDN_URL );
 		$default_config_json = wp_json_encode( self::get_default_tsml_config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		if ( '' === $meetinglistlite_tsml_config ) {
 			$meetinglistlite_tsml_config = $default_config_json;
@@ -634,6 +645,13 @@ class MEETINGLISTLITE {
 				<p>These settings provide fine-grained control over the TSML UI appearance and behavior. <a href="https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#configure" target="_blank" rel="noopener noreferrer">View full configuration documentation</a></p>
 
 				<table class="form-table">
+					<tr style="vertical-align: top;">
+						<th scope="row">TSML UI CDN URL</th>
+						<td>
+							<input type="text" name="meetinglistlite_tsml_cdn_url" id="meetinglistlite_tsml_cdn_url" size="80" value="<?php echo esc_attr( $meetinglistlite_tsml_cdn_url ); ?>" /><br />
+							<label for="meetinglistlite_tsml_cdn_url">URL to the TSML UI JavaScript file. Default: <?php echo esc_html( self::TSML_CDN_URL ); ?></label>
+						</td>
+					</tr>
 					<tr style="vertical-align: top;">
 						<th scope="row">TSML UI Configuration</th>
 						<td>
