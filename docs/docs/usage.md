@@ -49,7 +49,9 @@ You can customize the meeting list display by adding attributes to the shortcode
 | Attribute | Description | Example |
 |-----------|-------------|---------|
 | `data_src` | Override the data source URL | `data_src="https://example.com/meetings.json"` |
+| `google_key` | Override the Google API key | `google_key="YOUR_API_KEY"` |
 | `timezone` | Override the timezone | `timezone="America/New_York"` |
+| `base_path` | Override the base path for pretty URLs | `base_path="meetings"` |
 
 ### Examples
 
@@ -63,9 +65,19 @@ You can customize the meeting list display by adding attributes to the shortcode
 [tsml_ui timezone="Europe/London"]
 ```
 
-**Shortcode with all attributes:**
+**Shortcode with multiple attributes:**
 ```
 [tsml_ui data_src="https://mysite.com/meetings.json" timezone="America/Los_Angeles"]
+```
+
+**Shortcode with custom base path:**
+```
+[tsml_ui base_path="meetings"]
+```
+
+**All attributes combined:**
+```
+[tsml_ui data_src="https://mysite.com/meetings.json" google_key="YOUR_API_KEY" timezone="America/Los_Angeles" base_path="meetings"]
 ```
 
 ## Where to Use the Shortcode
@@ -248,7 +260,8 @@ https://yoursite.com/meetings/another-meeting
 
 **Example Usage:**
 ```
-[tsml_ui]  <!-- Uses pretty URLs if base path is configured -->
+[tsml_ui]  <!-- Uses pretty URLs if base path is configured in settings -->
+[tsml_ui base_path="meetings"]  <!-- Override base path per shortcode -->
 ```
 
 ## Multiple Meeting Lists

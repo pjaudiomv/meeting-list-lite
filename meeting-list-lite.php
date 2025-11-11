@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.2.2
+ * Version:           1.2.3
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class MEETINGLISTLITE {
 
-	private const MEETINGLISTLITE_VERSION = '1.2.2';
+	private const MEETINGLISTLITE_VERSION = '1.2.3';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
 	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
 	private const REWRITE_VERSION = '1.0';
@@ -157,13 +157,14 @@ class MEETINGLISTLITE {
 				'data_src'   => '',
 				'google_key' => '',
 				'timezone'   => '',
+				'base_path'  => '',
 			],
 			(array) $attrs,
 			'tsml_ui'
 		);
 		$option_data_src   = esc_url_raw( get_option( 'meetinglistlite_data_src' ) );
 		$option_google_key = sanitize_text_field( get_option( 'meetinglistlite_google_key' ) );
-		$base_path = get_option( 'meetinglistlite_base_path', '' );
+		$option_base_path  = get_option( 'meetinglistlite_base_path', '' );
 
 		$data_src = $attrs['data_src']
 			? esc_url_raw( $attrs['data_src'] )
@@ -174,6 +175,9 @@ class MEETINGLISTLITE {
 		$timezone = $attrs['timezone']
 			? sanitize_text_field( $attrs['timezone'] )
 			: sanitize_text_field( get_option( 'timezone_string' ) );
+		$base_path = $attrs['base_path']
+			? sanitize_text_field( $attrs['base_path'] )
+			: $option_base_path;
 		$timezone_attr   = $timezone ? ' data-timezone="' . esc_attr( $timezone ) . '"' : '';
 		$google_key_attr = $google_key ? ' data-google="' . esc_attr( $google_key ) . '"' : '';
 		$base_path_attr = ! empty( $base_path ) ? ' data-path="/' . esc_attr( trim( $base_path, '/' ) ) . '"' : '';

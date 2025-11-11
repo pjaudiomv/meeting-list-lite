@@ -200,6 +200,39 @@ After selecting a CSS template, you can further customize the appearance by edit
 
 For more CSS customization options, see the [TSML UI CSS Documentation](https://github.com/code4recovery/tsml-ui/?tab=readme-ov-file#customize-theme-colors).
 
+### TSML UI CDN URL
+
+By default, the plugin loads the TSML UI JavaScript component from the official Code4Recovery CDN. Advanced users can override this to use a custom build or alternative hosting location.
+
+**Default URL:**
+```
+https://tsml-ui.code4recovery.org/app.js
+```
+
+**When to customize:**
+- Using a custom TSML UI build with modifications
+- Hosting the TSML UI script on your own CDN
+- Testing development versions of TSML UI
+- Working in offline/restricted environments
+
+**How to configure:**
+1. Go to **Settings** → **Meeting List Lite**
+2. Under "Advanced Settings", find **TSML UI CDN URL**
+3. Enter your custom URL
+4. Click **Save Changes**
+
+**Example custom URLs:**
+```
+https://your-cdn.com/tsml-ui/app.js
+https://localhost:3000/app.js  (for local development)
+```
+
+**Important Notes:**
+- The URL must point to a valid TSML UI JavaScript file
+- Ensure CORS headers are properly configured if hosting externally
+- Most users should leave this at the default value
+- Custom builds should maintain compatibility with the TSML specification
+
 ## BMLT Integration
 
 ### Using with BMLT Root Server 4.0.0+

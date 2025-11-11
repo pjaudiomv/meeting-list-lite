@@ -132,6 +132,9 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.2.3
+* Added base_path as a shortcode attribute
+
 ### 1.2.2
 * Added configurable TSML CDN URL setting in Advanced Settings
 
