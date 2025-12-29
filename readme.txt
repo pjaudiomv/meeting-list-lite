@@ -4,8 +4,8 @@ Contributors: pjaudiomv
 Plugin URI: https://wordpress.org/plugins/meeting-list-lite/
 Tags: meeting list, recovery, addiction
 Requires PHP: 8.0
-Tested up to: 6.8
-Stable tag: 1.2.3
+Tested up to: 6.9
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,9 @@ This plugin relies on external services to function properly:
 - No data is sent to your data source; the plugin only reads from it
 
 == Changelog ==
+
+= 1.2.4 =
+* Update dependencies
 
 = 1.2.3 =
 * Added base_path as a shortcode attribute

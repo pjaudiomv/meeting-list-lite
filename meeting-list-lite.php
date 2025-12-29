@@ -5,7 +5,7 @@
  * Description:       This is a WordPress plugin with minimal settings for displaying meeting lists.
  * Install:           Drop this directory in the "wp-content/plugins/" directory and activate it. You need to specify "[tsml_ui]" in the code section of a page or a post.
  * Contributors:      pjaudiomv
- * Version:           1.2.3
+ * Version:           1.2.4
  * Requires PHP:      8.0
  * Requires at least: 5.3
  * License:           GPL v2 or later
@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class MEETINGLISTLITE {
 
-	private const MEETINGLISTLITE_VERSION = '1.2.3';
+	private const MEETINGLISTLITE_VERSION = '1.2.4';
 	private const SETTINGS_GROUP = 'meetinglistlite-group';
 	private const TSML_CDN_URL = 'https://tsml-ui.code4recovery.org/app.js';
 	private const REWRITE_VERSION = '1.0';
@@ -609,6 +609,22 @@ class MEETINGLISTLITE {
 			// Use the selected template CSS
 			$meetinglistlite_custom_css = self::get_css_by_template( $meetinglistlite_css_template );
 		}
+		?>
+		<?php
+		// Check if timezone is set to an offset instead of IANA timezone
+		$timezone_string = get_option( 'timezone_string' );
+		if ( empty( $timezone_string ) ) :
+			?>
+			<div class="notice notice-warning">
+				<p>
+					<strong>Timezone Configuration Required:</strong>
+					Your site is using a UTC offset instead of a named timezone.
+					For the meeting list to display times correctly, please set a valid IANA timezone
+					(e.g., "America/New_York") in <a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>">Settings → General</a>.
+				</p>
+			</div>
+			<?php
+		endif;
 		?>
 		<div class="wrap">
 			<h2>Meeting List Lite Settings</h2>
