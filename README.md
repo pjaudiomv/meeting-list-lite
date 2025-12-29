@@ -132,6 +132,9 @@ This plugin relies on external services to function properly:
 
 ## Changelog
 
+### 1.2.4
+* Update dependencies
+
 ### 1.2.3
 * Added base_path as a shortcode attribute
 
