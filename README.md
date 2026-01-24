@@ -2,7 +2,7 @@
 
 A streamlined WordPress plugin for displaying 12-step meeting information when your meeting data is maintained elsewhere.
 
-[![WordPress Plugin Version](https://img.shields.io/badge/WordPress-6.8%20tested-blue)](https://wordpress.org/plugins/meeting-list-lite/)
+[![WordPress Plugin Version](https://img.shields.io/badge/WordPress-6.9%20tested-blue)](https://wordpress.org/plugins/meeting-list-lite/)
 [![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-purple)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-GPLv2%2B-green)](http://www.gnu.org/licenses/gpl-2.0.html)
 
