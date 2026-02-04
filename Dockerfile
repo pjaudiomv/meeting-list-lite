@@ -6,7 +6,7 @@ RUN apt-get update && \
 	a2enmod ssl rewrite expires && \
 	a2ensite default-ssl
 
-ENV PHP_INI_PATH "/usr/local/etc/php/php.ini"
+ENV PHP_INI_PATH="/usr/local/etc/php/php.ini"
 
 RUN pecl install xdebug-3.5.0 && docker-php-ext-enable xdebug \
     && echo "xdebug.mode=debug" >> ${PHP_INI_PATH} \
